@@ -43,6 +43,66 @@
 
 #include "mcc_generated_files/mcc.h"
 
+
+//guitar tuner config
+#define SAMPLE_SIZE 256u
+#define PEAK_THRESH 0
+
+//global vars
+int16_t gia16_samples[SAMPLE_SIZE] = { 0 };
+volatile uint8_t gu8_gt_state = 0;
+
+//function prototypes
+void print_array(uint16_t len, int16_t *arr);
+int16_t ADC_10bit(void);
+
+/* Timer interrupt for adc sample frequency     
+ */
+void TMR0_Interrupt(void){
+    static uint16_t idx = 0;
+    static int16_t read_adc = 0;
+    
+    read_adc = ADC_10bit();
+    
+    if (gu8_gt_state == 0 && read_adc > PEAK_THRESH)
+        gu8_gt_state = 1;
+    if (gu8_gt_state == 1){
+        if(idx < SAMPLE_SIZE){
+            gia16_samples[idx] = read_adc;
+            idx++;
+        }
+        else{
+            idx = 0;
+            gu8_gt_state = 2;
+        }
+    }
+}
+
+/* read adc, using this rather than mcc's ADC_GetConversion(adc_channel_t channel)
+ * function. Since this project is using one adc channel 
+ * and doesn't switch the channel on/off, it doesn't need acq delay
+ */
+int16_t ADC_10bit(void){
+    // Start the conversion
+    ADCON0bits.GO_nDONE = 1;
+    // Wait for the conversion to finish
+    while (ADCON0bits.GO_nDONE);
+    // Conversion finished, return the result
+    return ((ADRESH << 8) + ADRESL); 
+}
+
+/* Print the sample array
+ */
+void print_array(uint16_t len, int16_t *arr){  
+    printf("[");
+    for(uint16_t i = 0; i < len; i++ )
+        if(i == len-1) // last item. no comma
+            printf("%i",arr[i]);
+        else
+            printf("%i,",arr[i]);
+    printf("]");
+}
+
 /*
                          Main application
  */
@@ -55,7 +115,7 @@ void main(void)
     // Use the following macros to:
 
     // Enable the Global Interrupts
-    //INTERRUPT_GlobalInterruptEnable();
+    INTERRUPT_GlobalInterruptEnable();
 
     // Enable the Peripheral Interrupts
     //INTERRUPT_PeripheralInterruptEnable();
@@ -65,10 +125,17 @@ void main(void)
 
     // Disable the Peripheral Interrupts
     //INTERRUPT_PeripheralInterruptDisable();
-
+    
+    TMR0_SetInterruptHandler(TMR0_Interrupt);
+    ADC_SelectChannel(channel_AN11);
+    
     while (1)
     {
         // Add your application code
+        if(gu8_gt_state == 2){
+            gu8_gt_state = 3;
+            print_array(SAMPLE_SIZE, gia16_samples);
+        }
     }
 }
 /**
