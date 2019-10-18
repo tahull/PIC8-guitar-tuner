@@ -43,18 +43,42 @@
 
 #include "mcc_generated_files/mcc.h"
 
-
 //guitar tuner config
-#define SAMPLE_SIZE 256u
-#define PEAK_THRESH 0
+#define FS 2000 //sample frequency set by timmer0 interrupt
+#define SAMPLE_SIZE 256u  //size of signal sample array
+#define PEAK_THRESH 0 //adc threshold to check for, before collecting samples
+#define VBIAS 0 //voltage bias from amplifier circuit
 
 //global vars
-int16_t gia16_samples[SAMPLE_SIZE] = { 0 };
-volatile uint8_t gu8_gt_state = 0;
+int16_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
+enum ge_state {scan,collect,process,pause} ge_gt_state; //guitar signal states
 
 //function prototypes
 void print_array(uint16_t len, int16_t *arr);
 int16_t ADC_10bit(void);
+uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr); // take sample frequence and sample array, return frequency
+
+/* Average magnitude difference function
+ * auto correlation function that's easy on math operations, no multiply
+ * something like y(k) = sum(abs(x(n)-x(n+k)))
+ * TODO test result sum, and finish pitch/frequency 
+ */
+uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr){
+    int16_t diff = 0;
+    uint16_t sum = 0;
+    
+    for(uint16_t k = 0; k < len; k++){
+        for(uint16_t n = 0; n < (len-k); n++){
+            diff = arr[n]-arr[n+k];
+            if (diff < 0)
+                diff = -diff;
+            sum = sum + diff; // sum up elements at k
+            
+        }
+        printf("sum[%i] %i",k,sum);
+    }
+    return sum;
+}
 
 /* Timer interrupt for adc sample frequency     
  */
@@ -64,16 +88,19 @@ void TMR0_Interrupt(void){
     
     read_adc = ADC_10bit();
     
-    if (gu8_gt_state == 0 && read_adc > PEAK_THRESH)
-        gu8_gt_state = 1;
-    if (gu8_gt_state == 1){
+    // found a loud signal, is if from a guitar?, does it matter?
+    // TODO: test if it's worth additional testing, like checking for a second
+    // peak and checking if the period falls in an expected range
+    if (ge_gt_state == scan && read_adc > PEAK_THRESH)
+        ge_gt_state = collect;
+    if (ge_gt_state == collect){
         if(idx < SAMPLE_SIZE){
-            gia16_samples[idx] = read_adc;
+            gia16_samples[idx] = read_adc - VBIAS;
             idx++;
         }
         else{
             idx = 0;
-            gu8_gt_state = 2;
+            ge_gt_state = process;
         }
     }
 }
@@ -132,8 +159,9 @@ void main(void)
     while (1)
     {
         // Add your application code
-        if(gu8_gt_state == 2){
-            gu8_gt_state = 3;
+        if(ge_gt_state == process){
+            uint16_t res = amdf(SAMPLE_SIZE, FS, gia16_samples);
+            ge_gt_state = pause;
             print_array(SAMPLE_SIZE, gia16_samples);
         }
     }
