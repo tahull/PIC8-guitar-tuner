@@ -46,8 +46,10 @@
 //guitar tuner config
 #define FS 2000 //sample frequency set by timmer0 interrupt
 #define SAMPLE_SIZE 256u  //size of signal sample array
-#define PEAK_THRESH 0 //adc threshold to check for, before collecting samples
-#define VBIAS 0 //voltage bias from amplifier circuit
+#define TRIGGER_LEVEL 200 //adc threshold to check for, before collecting samples
+// 10 bit adc, adc fvr positive reference set to 4.096v
+// 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
+#define VBIAS 450 //voltage bias from amplifier circuit
 
 //global vars
 int16_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
@@ -61,23 +63,44 @@ uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr); // take sample frequence
 /* Average magnitude difference function
  * auto correlation function that's easy on math operations, no multiply
  * something like y(k) = sum(abs(x(n)-x(n+k)))
- * TODO test result sum, and finish pitch/frequency 
+ * TODO test pitch/frequency accuracy
  */
 uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr){
     int16_t diff = 0;
-    uint16_t sum = 0;
+    uint16_t sum = 0, prev_sum = 0, period, thresh = 65000;
+    uint8_t state = 0;
     
-    for(uint16_t k = 0; k < len; k++){
+    for(uint16_t k = 1; k < len; k++){
+        prev_sum = sum;
+        sum = 0;
         for(uint16_t n = 0; n < (len-k); n++){
-            diff = arr[n]-arr[n+k];
+            diff = (arr[n]-arr[n+k])>>4; // sums get too large divide to avoid overflow
+            //printf("an[%i]=%i an+k[%i+%i]=%i diff=%i \n",n,arr[n],n,k,arr[n+k],diff);
             if (diff < 0)
                 diff = -diff;
-            sum = sum + diff; // sum up elements at k
-            
+            sum += diff; // sum up elements at k
+//            if (sum > thresh){
+//                //printf("problem %u", sum);
+//                break;
+//            }
         }
-        printf("sum[%i] %i",k,sum);
+        //Find first peak
+        if(state == 0 && (int16_t)(sum - prev_sum) <= 0){
+            thresh = sum/2; // set new threshold, ignore harmonics
+            state = 1;
+        }
+        //Find the index of the first lowest point
+        if(state == 1 && (sum < thresh) && (int16_t)(prev_sum - sum) < 0){
+            period = k - 1;
+            break;
+        }
+        //printf("sum[%u]=%u \n",k,sum);
+        //printf("%u,",sum);
     }
-    return sum;
+    // calc frequency relative to sampling frequency
+    uint16_t f = fs/period;
+    printf("freq: %u \n",f);
+    return f;
 }
 
 /* Timer interrupt for adc sample frequency     
@@ -91,7 +114,7 @@ void TMR0_Interrupt(void){
     // found a loud signal, is if from a guitar?, does it matter?
     // TODO: test if it's worth additional testing, like checking for a second
     // peak and checking if the period falls in an expected range
-    if (ge_gt_state == scan && read_adc > PEAK_THRESH)
+    if (ge_gt_state == scan && read_adc > TRIGGER_LEVEL)
         ge_gt_state = collect;
     if (ge_gt_state == collect){
         if(idx < SAMPLE_SIZE){
