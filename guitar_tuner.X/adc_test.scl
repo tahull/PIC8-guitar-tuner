@@ -1,0 +1,38 @@
+// 
+// scl test to inject simulated voltage levels to adc pin
+// adc pin: AN11
+// reference:
+//  microchip developer help
+//      https://microchipdeveloper.com/mplabx:scl
+//  microchip forum: scl code repository
+//      https://www.microchip.com/forums/m109149.aspx
+
+configuration for "pic16f1829" is
+end configuration;
+
+testbench for "pic16f1829" is
+begin
+    WAVEFORM: process is
+        file an11_file : text;
+        variable an11_status : file_open_status;
+        variable an11_line : line;
+    begin
+        //open file handle
+        file_open(an11_status, an11_file, "datapoints.txt", read_mode);
+        //if it opened
+        if an11_status == open_ok then
+            while endfile(an11_file) == false loop
+                //wait for processor sim to finish checking adc
+                wait until ADCON0.GO_nDONE == '0';
+                //read line of file to an11_line
+                readline(an11_file, an11_line);
+                //report("file open");
+                //inject this line to adc pin
+                read(an11_line, AN11);
+                wait for 10 ic;
+            end loop;
+            report("file closed");
+            file_close(an11_file);
+        end if;
+    end process; // loop back to start at end of process
+end testbench;
