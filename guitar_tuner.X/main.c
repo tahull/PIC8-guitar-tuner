@@ -45,20 +45,25 @@
 
 //guitar tuner config
 #define FS 2000 //sample frequency set by timmer0 interrupt
-#define SAMPLE_SIZE 256u  //size of signal sample array
+#define SAMPLE_SIZE 128u  //size of signal sample array
 #define TRIGGER_LEVEL 200 //adc threshold to check for, before collecting samples
 // 10 bit adc, adc fvr positive reference set to 4.096v
 // 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
 #define VBIAS 450 //voltage bias from amplifier circuit
+
+//debug
+#define PRINT_DEBUG
 
 //global vars
 int16_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
 enum ge_state {scan,collect,process,pause} ge_gt_state; //guitar signal states
 
 //function prototypes
-void print_array(uint16_t len, int16_t *arr);
 int16_t ADC_10bit(void);
 uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr); // take sample frequence and sample array, return frequency
+#ifdef PRINT_DEBUG
+void print_array(uint16_t len, int16_t *arr);
+#endif
 
 /* Average magnitude difference function
  * auto correlation function that's easy on math operations, no multiply
@@ -70,6 +75,10 @@ uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr){
     uint16_t sum = 0, prev_sum = 0, period, thresh = 65000;
     uint8_t state = 0;
     
+#ifdef PRINT_DEBUG
+    printf("amdf = [");
+#endif
+
     for(uint16_t k = 1; k < len; k++){
         prev_sum = sum;
         sum = 0;
@@ -80,7 +89,7 @@ uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr){
                 diff = -diff;
             sum += diff; // sum up elements at k
 //            if (sum > thresh){
-//                //printf("problem %u", sum);
+//                printf("problem %u", sum);
 //                break;
 //            }
         }
@@ -92,14 +101,20 @@ uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr){
         //Find the index of the first lowest point
         if(state == 1 && (sum < thresh) && (int16_t)(prev_sum - sum) < 0){
             period = k - 1;
+#ifdef PRINT_DEBUG
+            printf("%u",sum);
+#endif
             break;
         }
-        //printf("sum[%u]=%u \n",k,sum);
-        //printf("%u,",sum);
+#ifdef PRINT_DEBUG
+        printf("%u,",sum);
+#endif
     }
+#ifdef PRINT_DEBUG
+    printf("]\n");
+#endif
     // calc frequency relative to sampling frequency
     uint16_t f = fs/period;
-    printf("freq: %u \n",f);
     return f;
 }
 
@@ -143,15 +158,17 @@ int16_t ADC_10bit(void){
 
 /* Print the sample array
  */
-void print_array(uint16_t len, int16_t *arr){  
-    printf("[");
+#ifdef PRINT_DEBUG
+void print_array(uint16_t len, int16_t *arr){
+    printf("orig_signal = [");
     for(uint16_t i = 0; i < len; i++ )
         if(i == len-1) // last item. no comma
             printf("%i",arr[i]);
         else
             printf("%i,",arr[i]);
-    printf("]");
+    printf("]\n");
 }
+#endif
 
 /*
                          Main application
@@ -181,11 +198,15 @@ void main(void)
     
     while (1)
     {
-        // Add your application code
         if(ge_gt_state == process){
-            uint16_t res = amdf(SAMPLE_SIZE, FS, gia16_samples);
             ge_gt_state = pause;
+            INTERRUPT_GlobalInterruptDisable();
+            uint16_t res = amdf(SAMPLE_SIZE, FS, gia16_samples);
+            printf("freq: %u\n",res);
+#ifdef PRINT_DEBUG
             print_array(SAMPLE_SIZE, gia16_samples);
+#endif
+
         }
     }
 }
