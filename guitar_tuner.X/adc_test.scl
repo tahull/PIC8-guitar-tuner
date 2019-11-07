@@ -21,6 +21,7 @@ begin
         file_open(an11_status, an11_file, "datapoints.txt", read_mode);
         //if it opened
         if an11_status == open_ok then
+            AN11 <= 0 V;
             while endfile(an11_file) == false loop
                 //wait for processor sim to finish checking adc
                 wait until ADCON0.GO_nDONE == '0';

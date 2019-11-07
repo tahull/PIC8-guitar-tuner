@@ -4,9 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # sample frequency
-fs = 2000
+fs =5000
 # set frequency
-f = 82.4
+#f = 82.4 #e2
+f = 329.6 #e4
 # set fundamental frequency amplitude in mili volts
 A = 300
 # set some sample size
@@ -34,13 +35,15 @@ if yt[mini] < 0:
 mid = (yt[maxi] + yt[mini])/2 
 pk_pk = yt[maxi] - yt[mini]
 
-print ("mV peak",yt[maxi],"peak to peak",pk_pk ,"offset", np.uint16(mid))
-
 # plot the signal
 plt.plot(t,yt)
 plt.axhline(mid,color='orange')
 plt.axhline(0,color='black')
 plt.show()
+
+print ("target f",f, "| mV peak", np.int16(yt[maxi]), \
+       "\npeak to peak", np.int16(pk_pk), "| offset", np.int16(mid))
+
 
 # open and overwrite file
 file = open("../guitar_tuner.X/datapoints.txt","w")
