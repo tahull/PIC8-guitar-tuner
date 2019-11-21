@@ -5,6 +5,7 @@
  */
 
 #include "mcc_generated_files/mcc.h"
+#include "amdf.h"
 
 //guitar tuner config
 #define FS 5000 //sample frequency set by timmer0 interrupt
@@ -23,78 +24,9 @@ enum ge_state {scan,collect,process,pause} ge_gt_state; //guitar signal states
 
 //function prototypes
 int16_t ADC_10bit(void);
-uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr); // take sample frequence and sample array, return frequency
 #ifdef PRINT_DEBUG
 void print_array(uint16_t len, int16_t *arr);
 #endif
-
-/* Average magnitude difference function
- * auto correlation function that's easy on math operations, no multiply
- * something like y(k) = sum(abs(x(n)-x(n+k)))
- * accuracy depends on sampling frequency and the target frequency
- * ex. at fs = 5Khz
- * approximate accurracy
- * +/- .5 hz at 60-100hz
- * ~ +/- 3 hz at 300-400 hz
- */
-uint16_t amdf(uint16_t len, uint16_t fs, int16_t *arr){
-    int16_t diff = 0, p_adj = 0;
-    uint16_t f, alpha = 0, beta = 0, gamma = 0, period, thresh = 65000;
-    uint8_t state = 0;
-    
-#ifdef PRINT_DEBUG
-    //print the original array
-    print_array(SAMPLE_SIZE, gia16_samples);
-    //start print of correlation points
-    printf("amdf = [");
-#endif
-
-    for(uint16_t k = 1; k < len; k++){
-        gamma = beta;
-        beta = alpha;
-        alpha = 0;
-        for(uint16_t n = 0; n < (len-k); n++){
-            diff = (arr[n]-arr[n+k])>>4; // sums get too large divide to avoid overflow
-            //printf("an[%i]=%i an+k[%i+%i]=%i diff=%i \n",n,arr[n],n,k,arr[n+k],diff);
-            if (diff < 0)
-                diff = -diff;
-            alpha += (uint16_t)diff; // sum up elements at k
-//            if (sum > thresh){
-//                printf("problem %u", sum);
-//                break;
-//            }
-        }
-        //Find first peak
-        if(state == 0 && (int16_t)(alpha - beta) <= 0){
-            thresh = alpha/2; // set new threshold, ignore harmonics
-            state = 1;
-        }
-        //Find the index of the first lowest point
-        if(state == 1 && (beta < thresh) && (int16_t)(beta - alpha) < 0){
-            period = k - 1;
-#ifndef PRINT_DEBUG
-            break;
-        }
-    }
-    //parabolic peak interpolation. +/- amount to adjust current period
-    p_adj = (((int32_t)alpha - gamma)*50L)/((int16_t)(2*beta - alpha - gamma));
-#else
-            printf("%u",alpha);
-            break;
-        }
-        printf("%u,",alpha);
-    }
-    f = ((uint32_t)fs*10)/period;
-     //parabolic peak interpolation. +/- amount to adjust current period
-    p_adj = (((int32_t)alpha - gamma)*50L)/((int16_t)(2*beta - alpha - gamma));
-
-    printf("]\nT: %u, pre interpolated f: %u.%u adj: .%i\n", \
-            period,(uint16_t)(f/10),(uint16_t)(f%10),p_adj);
-#endif
-    // calc frequency relative to sampling frequency
-    f = ((uint32_t)fs*1000L)/((period*100L) + p_adj);
-    return f;
-}
 
 /* Timer interrupt for adc sample frequency     
  */
@@ -148,6 +80,7 @@ void print_array(uint16_t len, int16_t *arr){
 }
 #endif
 
+
 /*
                          Main application
  */
@@ -177,10 +110,14 @@ void main(void)
     while (1)
     {
         if(ge_gt_state == process){
+#ifdef PRINT_DEBUG
+            //print the original array
+            print_array(SAMPLE_SIZE, gia16_samples);
+#endif
             ge_gt_state = pause;
             INTERRUPT_GlobalInterruptDisable();
-            uint16_t res = amdf(SAMPLE_SIZE, FS, gia16_samples);
-            printf("freq: %u.%u\n",(uint16_t)(res/10),(uint16_t)(res%10));
+            uint16_t f = amdf(SAMPLE_SIZE, gia16_samples, FS);
+            printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
         }
     }
 }
