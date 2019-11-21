@@ -6,6 +6,7 @@
 
 #include "mcc_generated_files/mcc.h"
 #include "amdf.h"
+#include "tuning.h"
 
 //guitar tuner config
 #define FS 5000 //sample frequency set by timmer0 interrupt
@@ -117,7 +118,8 @@ void main(void)
             ge_gt_state = pause;
             INTERRUPT_GlobalInterruptDisable();
             uint16_t f = amdf(SAMPLE_SIZE, gia16_samples, FS);
-            printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
+            //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
+            tuner_display(f);
         }
     }
 }
