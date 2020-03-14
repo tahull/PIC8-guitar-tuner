@@ -23,6 +23,12 @@
 //#define TRIGGER_LEVEL 0 //adc threshold to check for, before collecting samples
 #define TRIGGER_LEVEL (ADCOFFSET + ADCOFFSET/2)//adc threshold to check for, before collecting samples
 
+#if ADCBITS > 6
+typedef uint16_t adc_t;
+#else
+typedef uint8_t adc_t;
+#endif
+
 //debug. uncomment to print debug info
 //#define PRINT_DEBUG
 //#define PRINT_AMDF_DEBUG

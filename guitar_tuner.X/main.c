@@ -9,14 +9,12 @@
 #include "tuning.h"
 
 
-
-
 //global vars
 int16_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
 enum ge_state {scan,collect,process,pause} ge_gt_state; //sampling states
 
 //function prototypes
-int16_t ADC_10bit(void);
+adc_t ADC_read(void);
 #ifdef PRINT_DEBUG
 void print_array(uint16_t len, int16_t *arr);
 #endif
@@ -24,19 +22,19 @@ void print_array(uint16_t len, int16_t *arr);
 /* Timer interrupt for adc sample frequency     
  */
 void TMR0_Interrupt(void){
-    static uint16_t idx = 0;
-    static int16_t read_adc = 0;
+    static uint16_t idx;
+    static adc_t adc_val;
     
-    read_adc = ADC_10bit();
+    adc_val = ADC_read();
     
     // found a loud signal, is if from a guitar?, does it matter?
     // TODO: test if it's worth additional testing, like checking for a second
     // peak and checking if the period falls in an expected range
-    if (ge_gt_state == scan && read_adc > TRIGGER_LEVEL)
+    if (ge_gt_state == scan && adc_val > TRIGGER_LEVEL)
         ge_gt_state = collect;
     if (ge_gt_state == collect){
         if(idx < SAMPLE_SIZE){
-            gia16_samples[idx] = read_adc - ADCOFFSET;
+            gia16_samples[idx] = adc_val - ADCOFFSET;
             idx++;
         }
         else{
@@ -50,13 +48,17 @@ void TMR0_Interrupt(void){
  * function. Since this project is using one adc channel 
  * and doesn't switch the channel on/off, it doesn't need acq delay
  */
-int16_t ADC_10bit(void){
+adc_t ADC_read(void){
     // Start the conversion
     ADCON0bits.GO_nDONE = 1;
-    // Wait for the conversion to finish
+    // Wait for the conversion to finish. ~30uS in this wait loop
     while (ADCON0bits.GO_nDONE);
     // Conversion finished, return the result
-    return ((ADRESH << 8) + ADRESL); 
+#if ADCBITS > 8
+    return (((uint16_t)(ADRESH << 8) + ADRESL)>>6);
+#else
+    return ADRESH >> (8-ADCBITS); 
+#endif
 }
 
 /* Print the sample array
