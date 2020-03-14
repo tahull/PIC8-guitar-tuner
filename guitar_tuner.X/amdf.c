@@ -10,11 +10,11 @@
  * ~ +/- 3 hz at 300-400 hz
  */
 uint16_t amdf(uint16_t len, int16_t *arr, uint16_t fs){
-    int16_t diff = 0, p_adj = 0;
+    int16_t diff = 0, period_adjust = 0;
     uint16_t f, alpha = 0, beta = 0, gamma = 0, period, thresh = 65000;
     uint8_t state = 0;
     
-#ifdef PRINT_DEBUG
+#ifdef PRINT_AMDF_DEBUG
     //start print of correlation points
     printf("amdf = [");
 #endif
@@ -36,21 +36,21 @@ uint16_t amdf(uint16_t len, int16_t *arr, uint16_t fs){
         }
         //Find first peak
         if(state == 0 && (int16_t)(alpha - beta) <= 0){
-            thresh = beta/2; // set new threshold, ignore harmonics
+            thresh = beta/2; // set new threshold, low enough to ignore harmonics
             state = 1;
         }
         //Find the index of the first lowest point
         else if(state == 1 && (beta < thresh) && (int16_t)(beta - alpha) < 0){
             period = k - 1;
 //no debug
-#ifndef PRINT_DEBUG
+#ifndef PRINT_AMDF_DEBUG
             break;
         }
     }
     //parabolic peak interpolation. +/- amount to adjust current period
-    p_adj = (((int32_t)alpha - gamma)*50L)/((int16_t)(2*beta - alpha - gamma));
+    period_adjust = (((int32_t)alpha - gamma)*50L)/((int16_t)(2*beta - alpha - gamma));
     // calc frequency relative to sampling frequency
-    f = ((uint32_t)fs*1000L)/((period*100L) + p_adj);
+    f = ((uint32_t)fs*1000L)/((period*100L) + period_adjust);
 //do debug messages
 #else
             printf("%u]\n",alpha); // print final amdf array element
@@ -64,10 +64,10 @@ uint16_t amdf(uint16_t len, int16_t *arr, uint16_t fs){
             period,(uint16_t)(f/10),(uint16_t)(f%10));
     
     //parabolic peak interpolation. +/- amount to adjust current period
-    p_adj = (((int32_t)alpha - gamma)*50L)/((int16_t)(2*beta - alpha - gamma));
+    period_adjust = (((int32_t)alpha - gamma)*50L)/((int16_t)(2*beta - alpha - gamma));
     // calc frequency relative to sampling frequency
-    f = ((uint32_t)fs*1000L)/((period*100L) + p_adj);
-    printf("adj: .%i interpolated f %u.%u\n", p_adj, \
+    f = ((uint32_t)fs*1000L)/((period*100L) + period_adjust);
+    printf("adj: .%i interpolated f %u.%u\n", period_adjust, \
             (uint16_t)(f/10),(uint16_t)(f%10));
 #endif
     return f;

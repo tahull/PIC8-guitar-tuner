@@ -14,7 +14,7 @@ void tuner_display(uint16_t f){
     for(uint8_t i = 0; i < 6; i++)
         //if frequency is between lower_range and upper_range
         if(f >= trans[i] && f < trans[i+1]){
-#ifdef PRINT_DEBUG
+#ifdef PRINT_TUNING_DEBUG
             printf("found %u.%u target %u.%u upper lim %u\n", \
                     (uint16_t)(f/10),(uint16_t)(f%10), \
                     (uint16_t)(notes[i]/10),(uint16_t)(notes[i]%10),\
@@ -26,11 +26,11 @@ void tuner_display(uint16_t f){
             }
             //pitch too high
             else if(f > notes[i]){
-                printf("---(%u)<<<\n",i);
+                printf("---(%s)<<<\n",note_name[i]);
             }
             //pitch too low
             else{
-                printf(">>>%u---\n",i);
+                printf(">>>(%s)---\n",note_name[i]);
             }
             break;
         }

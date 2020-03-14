@@ -5,7 +5,7 @@
  */
 
 #include "mcc_generated_files/mcc.h"
-#include "amdf.h"
+#include "guitar_tuner.h"
 #include "tuning.h"
 
 //guitar tuner config
@@ -111,15 +111,20 @@ void main(void)
     while (1)
     {
         if(ge_gt_state == process){
+            ge_gt_state = pause;
+            INTERRUPT_GlobalInterruptDisable();
+            
 #ifdef PRINT_DEBUG
             //print the original array
             print_array(SAMPLE_SIZE, gia16_samples);
 #endif
-            ge_gt_state = pause;
-            INTERRUPT_GlobalInterruptDisable();
+            
             uint16_t f = amdf(SAMPLE_SIZE, gia16_samples, FS);
             //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             tuner_display(f);
+            
+            ge_gt_state = scan;
+            INTERRUPT_GlobalInterruptEnable();
         }
     }
 }

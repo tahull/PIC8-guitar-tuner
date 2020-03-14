@@ -9,6 +9,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
+#include "guitar_tuner.h"
 
 
 /* @Summary
