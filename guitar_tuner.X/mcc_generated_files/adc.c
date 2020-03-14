@@ -13,12 +13,12 @@
   @Description
     This source file provides implementations for driver APIs for ADC.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.77
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.80.0
         Device            :  PIC16F1829
         Driver Version    :  2.01
     The generated drivers are tested against the following:
-        Compiler          :  XC8 2.05 and above
-        MPLAB             :  MPLAB X 5.20
+        Compiler          :  XC8 2.10 and above
+        MPLAB             :  MPLAB X 5.30
 */
 
 /*
@@ -57,6 +57,8 @@
 */
 
 #define ACQ_US_DELAY 5
+
+void (*ADC_InterruptHandler)(void);
 
 /**
   Section: ADC Module APIs

@@ -1,9 +1,5 @@
-<config configVersion="1.1" device="PIC16F1829" coreVersion="4.75">
+<config configVersion="1.1" device="PIC16F1829" coreVersion="4.85.0">
    <usedClasses class="java.util.HashMap">
-      <entry>
-         <string>ADC</string>
-         <string>class com.microchip.mcc.mcu8.modules.adc.ADC</string>
-      </entry>
       <entry>
          <string>System Module</string>
          <string>class com.microchip.mcc.mcu8.systemManager.SystemManager</string>
@@ -11,6 +7,10 @@
       <entry>
          <string>TMR0</string>
          <string>class com.microchip.mcc.mcu8.modules.tmr0.TMR0</string>
+      </entry>
+      <entry>
+         <string>ADC</string>
+         <string>class com.microchip.mcc.mcu8.modules.adc.ADC</string>
       </entry>
       <entry>
          <string>com.microchip.mcc.boardsupportlibrary.BoardSuppportLibraryLibraryModule</string>
@@ -46,7 +46,7 @@
       </entry>
    </usedClasses>
    <usedLibraries class="java.util.ArrayList">
-      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.mcu8.Mcu8PeripheralLibrary" version="1.77.0"/>
+      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.mcu8.Mcu8PeripheralLibrary" version="1.80.0"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.boardsupportlibrary.BoardSuppportLibrary" version="0.95.1"/>
    </usedLibraries>
    <tokenMap class="java.util.HashMap">
@@ -395,12 +395,12 @@
          <value>4</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="FVR" registerAlias="FVRCON" settingAlias="CDAFVR" alias="1x"/>
-         <value>1</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="ADC" registerAlias="ADCON0" settingAlias="CHS" alias="AN3"/>
          <value>3</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="FVR" registerAlias="FVRCON" settingAlias="CDAFVR" alias="1x"/>
+         <value>1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="Pin Module" registerAlias="IOCAN" settingAlias="IOCAN1" alias="enabled"/>
@@ -411,12 +411,12 @@
          <value>6</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR0" registerAlias="OPTION_REG" settingAlias="INTEDG" alias="falling"/>
-         <value>0</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="ADC" registerAlias="ADCON0" settingAlias="CHS" alias="AN5"/>
          <value>5</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR0" registerAlias="OPTION_REG" settingAlias="INTEDG" alias="falling"/>
+         <value>0</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="TRISC" settingAlias="TRISC6"/>
@@ -435,12 +435,12 @@
          <value>1</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="ADC" registerAlias="ADCON0" settingAlias="CHS" alias="AN1"/>
-         <value>1</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="EUSART" registerAlias="TXI" settingAlias="flag"/>
          <value>disabled</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="ADC" registerAlias="ADCON0" settingAlias="CHS" alias="AN1"/>
+         <value>1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="EUSART" registerAlias="BAUDCON" settingAlias="BRG16"/>
@@ -979,12 +979,12 @@
          <value>0</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="FVR" registerAlias="FVRCON" settingAlias="TSEN" alias="enabled"/>
-         <value>1</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.CustomKey" moduleName="EUSART" name="EUSART_RCIISRFunction"/>
          <value>RxDefaultInterruptHandler</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="FVR" registerAlias="FVRCON" settingAlias="TSEN" alias="enabled"/>
+         <value>1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR0" registerAlias="OPTION_REG" settingAlias="TMRCS" alias="T0CKI"/>
@@ -1043,12 +1043,12 @@
          <value>0</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="FVR" registerAlias="FVRCON" settingAlias="ADFVR" alias="2x"/>
-         <value>2</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="ADC" registerAlias="ADCON1" settingAlias="ADCS" alias="FOSC/8"/>
          <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="FVR" registerAlias="FVRCON" settingAlias="ADFVR" alias="2x"/>
+         <value>2</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="Pin Module" registerAlias="IOCAN" settingAlias="IOCAN5" alias="enabled"/>
@@ -1555,12 +1555,12 @@
          <value>1</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR0" registerAlias="TMRI" settingAlias="enable"/>
-         <value>enabled</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="EUSART" registerAlias="BAUDCON" settingAlias="SCKP" alias="Inverted"/>
          <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR0" registerAlias="TMRI" settingAlias="enable"/>
+         <value>enabled</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="TMR0" registerAlias="OPTION_REG" settingAlias="PSA"/>
@@ -1835,12 +1835,12 @@
          <value>0</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="ADC" registerAlias="ADCON1" settingAlias="ADNREF"/>
-         <value>VSS</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="EUSART" registerAlias="BAUDCON" settingAlias="ABDOVF" alias="overflow"/>
          <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="ADC" registerAlias="ADCON1" settingAlias="ADNREF"/>
+         <value>VSS</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="APFCON1" settingAlias="P1CSEL"/>
@@ -2851,12 +2851,12 @@
          <value>0</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR0" registerAlias="OPTION_REG" settingAlias="PS" alias="1:32"/>
-         <value>4</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.RegisterKey" moduleName="EUSART" registerAlias="SPBRGL"/>
          <value>68</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="TMR0" registerAlias="OPTION_REG" settingAlias="PS" alias="1:32"/>
+         <value>4</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="Pin Module" registerAlias="WPUA" settingAlias="WPUA4" alias="set"/>
@@ -3426,71 +3426,71 @@
    <generatedFileHashHistoryMap class="java.util.HashMap">
       <entry>
          <file>mcc_generated_files/interrupt_manager.h</file>
-         <hash>ddbf9565c748046d8dc085fb8a5b219c37af42d149fb2986eb0d79e4407390a0</hash>
+         <hash>7b76cb8a6fb55f06175b99c8e3012b9ccc7840501d9c4b53bcb41338755bc2ad</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/fvr.c</file>
-         <hash>ad875f9c6ae5f7c2ae99c290e5e0d90047954b59e4d911d7e4f295e02224c74d</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files/pin_manager.h</file>
-         <hash>ce0001074b863997cc3723fdabab2691b5d335955b3f80dcb0cc6ef1918ea4a9</hash>
+         <hash>2b84edbc8e565e1df63a8511661939442dd95ae8acae7d83a625c72dfcb1c54f</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/tmr0.c</file>
-         <hash>3c591c132e7c2c67d75a26c963109a319a7e4f707ccee1904d16da1eccf77fa1</hash>
+         <hash>072f5cc1292545dfbd50b4ac1d7cb1ca3cf8592704e843194ea9956504503cf5</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files/pin_manager.h</file>
+         <hash>4c537617147d3cd08dc861b9c603917dd715a26d2d1f0426128a0004748de822</hash>
       </entry>
       <entry>
          <file>main.c</file>
-         <hash>54f831993305cabe0c9bb1f9dc2ee7af1d87fffec87d4753578136602852ba50</hash>
+         <hash>d2f6d34370f3cfb80c7c46a5a92f6b7c0de363c191fb6ac0b7c0c3b638a2ab75</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/eusart.c</file>
-         <hash>ca703ca7c25045a745aba2b99ece23cfd78ca4c9656f7cc042aae728659d475d</hash>
+         <hash>3db2c10155e66d17a9648a7394c9aa0388c95967fd4f76f5b97c516ad4e60617</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/adc.h</file>
-         <hash>8406c988fe3cd8fbb649cd177906c3d3a6563bc008bd2b7d1414d30a79997f3b</hash>
+         <hash>b04254adf308a4c9bbbb11d1106015a251d1b9cfc252f45b53c9264b4ef34fe4</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/tmr0.h</file>
-         <hash>9e4f0e2360145513a562981a18784abdb970ce5dd10d3e83829aaaadbd937357</hash>
+         <hash>5623bb1829f38015023441a42b951c1ff2d2b810c527e8b6f1060c905f300860</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/device_config.h</file>
-         <hash>9f070b3d5699a6ff1d4987a41e743babce3755cc02d309d797151fe2443ec52d</hash>
+         <hash>9f9a0b71faa4cd5db04462829a5d3c7ace56667007b0fe3d5b9058c11791bc18</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/adc.c</file>
-         <hash>e65319a7ef2b170d59810f13a194cb3b068488d4c1cded7a8a199c6bb3fc1556</hash>
+         <hash>7dff72a3c35ee48df37a1bad48e79557183dda5ad3913e800ad24ef2e2899172</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/mcc.h</file>
-         <hash>a4f5ad2e98d826323f7ae4afdcf6f17195646eb508ea3a790ef1919719292084</hash>
+         <hash>3e14898ce1f2b1f22a2afecdff6aab1526769d0a75c233eab9afbf2a7a0271f6</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/device_config.c</file>
-         <hash>3cbc142259f7778bc08dad87c538cca24336a3446567bd75369c46b734124ddf</hash>
+         <hash>f47d495aca9ef475723fe0f482db5d00290510bf85f7f0a1e980445ca5ef704e</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/eusart.h</file>
-         <hash>abe8487a743f0cea35421d0f2bad751cb695c86f5e1a86954ff9c26e8d8ad03d</hash>
+         <hash>92d01e589330895a99e719226387020bc82f68bac3f4df6988e0d06ff7d5c2e6</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/interrupt_manager.c</file>
-         <hash>a7e384620c6b987736b009c93830f0a724c3bcb27af88ceff4303e120c059bd4</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files/fvr.h</file>
-         <hash>b8c53f2a3fea393eec3eddcfbe985455ae6f3ca56358a2bc042f468aca8719fa</hash>
+         <hash>bf7e0905f6b3cc4ac938b91150964105a80d7be40b68128e25c786292e39da6e</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/mcc.c</file>
-         <hash>abd63d0d58cdf5a76fda716c4d0196415791ba71971ef80c2627833033a57909</hash>
+         <hash>85f361a456af4a0e715c635195b43efed31007c82567a5196cdbd153d53f219d</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files/fvr.h</file>
+         <hash>6575bcebbc5208ed08fe0a9c7e1cd99819f873ce2132077be86cb2a101da1c8f</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/pin_manager.c</file>
-         <hash>d7a7bde3a5dc4e690731b7096921128151dc6a941d20b3bc623c372b7b1e37f4</hash>
+         <hash>f112df4fab925e391d8d98277508502f0d493a8b5ede63fa41d6eaaf2f43e91f</hash>
       </entry>
    </generatedFileHashHistoryMap>
    <mc3libFileHashHistoryMap class="java.util.HashMap"/>
