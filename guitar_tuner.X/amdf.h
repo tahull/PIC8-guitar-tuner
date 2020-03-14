@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "guitar_tuner.h"
 
+#define FIXED_POINT_INTP_SHIFT 8 
 
 /* @Summary
  *  apply AMDF autocorrelation to a sample array

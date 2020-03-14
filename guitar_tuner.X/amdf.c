@@ -48,9 +48,9 @@ uint16_t amdf(uint16_t len, int16_t *arr, uint16_t fs){
         }
     }
     //parabolic peak interpolation. +/- amount to adjust current period
-    period_adjust = (((int32_t)alpha - gamma)*50L)/((int16_t)(2*beta - alpha - gamma));
+    period_adjust = (((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/((int16_t)(2*(2*beta - alpha - gamma)));
     // calc frequency relative to sampling frequency
-    f = ((uint32_t)fs*1000L)/((period*100L) + period_adjust);
+    f = (((uint32_t)fs*10)<<FIXED_POINT_INTP_SHIFT)/((period<<FIXED_POINT_INTP_SHIFT) + period_adjust);
 //do debug messages
 #else
             printf("%u]\n",alpha); // print final amdf array element
@@ -64,9 +64,9 @@ uint16_t amdf(uint16_t len, int16_t *arr, uint16_t fs){
             period,(uint16_t)(f/10),(uint16_t)(f%10));
     
     //parabolic peak interpolation. +/- amount to adjust current period
-    period_adjust = (((int32_t)alpha - gamma)*50L)/((int16_t)(2*beta - alpha - gamma));
+    period_adjust = (((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/((int16_t)(2*(2*beta - alpha - gamma)));
     // calc frequency relative to sampling frequency
-    f = ((uint32_t)fs*1000L)/((period*100L) + period_adjust);
+    f = (((uint32_t)fs*10)<<FIXED_POINT_INTP_SHIFT)/((period<<FIXED_POINT_INTP_SHIFT) + period_adjust);
     printf("adj: .%i interpolated f %u.%u\n", period_adjust, \
             (uint16_t)(f/10),(uint16_t)(f%10));
 #endif
