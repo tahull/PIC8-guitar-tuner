@@ -8,20 +8,12 @@
 #include "guitar_tuner.h"
 #include "tuning.h"
 
-//guitar tuner config
-#define FS 5000 //sample frequency set by timmer0 interrupt
-#define SAMPLE_SIZE 128u  //size of signal sample array
-#define TRIGGER_LEVEL 200 //adc threshold to check for, before collecting samples
-// 10 bit adc, adc fvr positive reference set to 4.096v
-// 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
-#define VBIAS 450 //voltage bias from amplifier circuit
 
-//debug
-//#define PRINT_DEBUG
+
 
 //global vars
 int16_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
-enum ge_state {scan,collect,process,pause} ge_gt_state; //guitar signal states
+enum ge_state {scan,collect,process,pause} ge_gt_state; //sampling states
 
 //function prototypes
 int16_t ADC_10bit(void);
@@ -44,7 +36,7 @@ void TMR0_Interrupt(void){
         ge_gt_state = collect;
     if (ge_gt_state == collect){
         if(idx < SAMPLE_SIZE){
-            gia16_samples[idx] = read_adc - VBIAS;
+            gia16_samples[idx] = read_adc - ADCOFFSET;
             idx++;
         }
         else{
@@ -107,6 +99,10 @@ void main(void)
     
     TMR0_SetInterruptHandler(TMR0_Interrupt);
     ADC_SelectChannel(channel_AN11);
+    
+#ifdef PRINT_DEBUG
+    printf("adc offset: %d adc trigger: %d \n", ADCOFFSET, TRIGGER_LEVEL);
+#endif  
     
     while (1)
     {
