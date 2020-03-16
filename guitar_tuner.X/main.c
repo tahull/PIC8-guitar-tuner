@@ -5,8 +5,8 @@
  */
 
 #include "mcc_generated_files/mcc.h"
-#include "guitar_tuner.h"
-#include "tuning.h"
+#include "tuner_defs.h"
+#include "tuner_display.h"
 #include "amdf.h"
 
 
@@ -16,7 +16,7 @@ enum ge_state {scan,collect,process,pause} ge_gt_state; //sampling states
 
 //function prototypes
 adc_t ADC_read(void);
-#ifdef PRINT_DEBUG
+#ifdef PRINT_SIGNAL_DEBUG
 void print_array(uint16_t len, int16_t *arr);
 #endif
 
@@ -70,7 +70,7 @@ adc_t ADC_read(void){
 
 /* Print the sample array
  */
-#ifdef PRINT_DEBUG
+#ifdef PRINT_SIGNAL_DEBUG
 void print_array(uint16_t len, int16_t *arr){
     printf("orig_signal = [");
     for(uint16_t i = 0; i < len; i++ )
@@ -109,7 +109,7 @@ void main(void)
     TMR0_SetInterruptHandler(TMR0_Interrupt);
     ADC_SelectChannel(channel_AN11);
     
-#ifdef PRINT_DEBUG
+#ifdef PRINT_SIGNAL_DEBUG
     printf("adc offset: %d adc trigger: %d \n", ADCOFFSET, TRIGGER_LEVEL);
 #endif  
     
@@ -119,7 +119,7 @@ void main(void)
             ge_gt_state = pause;
             INTERRUPT_GlobalInterruptDisable();
             
-#ifdef PRINT_DEBUG
+#ifdef PRINT_SIGNAL_DEBUG
             //print the original array
             print_array(SAMPLE_SIZE, gia16_samples);
 #endif

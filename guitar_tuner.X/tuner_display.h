@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "guitar_tuner.h"
+#include "tuner_defs.h"
 
 #define TUNING_ACCURACY 15 // 15 -> +/- 1.5 hz accuracy
 // standard tuning

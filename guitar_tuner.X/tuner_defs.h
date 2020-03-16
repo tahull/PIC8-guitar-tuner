@@ -10,17 +10,18 @@
 //#include "amdf.h"
 
 //guitar tuner config
-#define FS 5000 //sample frequency set by timmer0 interrupt
-#define SAMPLE_SIZE 128u  //size of signal sample array
+#define FS 5000 //sample frequency set by timmer interrupt rate
+#define SAMPLE_SIZE 128  //size of signal sample array
 
 #define ADCBITS 10
-//voltage bias from amplifier circuit
+//voltage bias from amplifier circuit in milli volts
 #define VBIAS 1800    //1.8v
 #define ADCVREF 4096    //fvr positive reference voltage 4.096v
 // adc offset. ex for 10 bit
 // 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
 #define ADCOFFSET (VBIAS/(ADCVREF/(1<<ADCBITS)))
-//#define TRIGGER_LEVEL 0 //adc threshold to check for, before collecting samples
+// adc threshold to check for, before collecting samples
+// set as +50% of the offset
 #define TRIGGER_LEVEL (ADCOFFSET + ADCOFFSET/2)//adc threshold to check for, before collecting samples
 
 //ADC bit resolution 
@@ -37,9 +38,9 @@ typedef int16_t samp_buf_t;
 #endif
 
 //debug. uncomment to print debug info
-//#define PRINT_DEBUG
-//#define PRINT_AMDF_DEBUG
-//#define PRINT_TUNING_DEBUG
+//#define PRINT_SIGNAL_DEBUG    // Raw ADC sample buffer
+//#define PRINT_AMDF_DEBUG      // Processed amdf vals
+//#define PRINT_TUNING_DEBUG    // Tuner display stuff
 
 
 #endif	/* GUITAR_TUNER_H */

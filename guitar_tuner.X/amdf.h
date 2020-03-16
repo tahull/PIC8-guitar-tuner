@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include "guitar_tuner.h"
+#include "tuner_defs.h"
 
 #define FIXED_POINT_INTP_SHIFT 8 
 

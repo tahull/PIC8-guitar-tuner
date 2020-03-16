@@ -17,8 +17,8 @@
         <itemPath>mcc_generated_files/fvr.h</itemPath>
       </logicalFolder>
       <itemPath>amdf.h</itemPath>
-      <itemPath>tuning.h</itemPath>
-      <itemPath>guitar_tuner.h</itemPath>
+      <itemPath>tuner_defs.h</itemPath>
+      <itemPath>tuner_display.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -41,7 +41,7 @@
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>amdf.c</itemPath>
-      <itemPath>tuning.c</itemPath>
+      <itemPath>tuner_display.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
