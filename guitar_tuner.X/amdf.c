@@ -9,7 +9,7 @@
  * +/- .5 hz at 60-100hz
  * ~ +/- 3 hz at 300-400 hz
  */
-uint16_t amdf(uint16_t len, int16_t *arr, uint16_t fs){
+uint16_t amdf(uint16_t len, samp_buf_t *arr, uint16_t fs){
     int16_t diff = 0, period_adjust = 0;
     uint16_t f, alpha = 0, beta = 0, gamma = 0, period, thresh = 65000;
     uint8_t state = 0;

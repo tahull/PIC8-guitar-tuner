@@ -7,7 +7,7 @@
 #ifndef GUITAR_TUNER_H
 #define	GUITAR_TUNER_H
 
-#include "amdf.h"
+//#include "amdf.h"
 
 //guitar tuner config
 #define FS 5000 //sample frequency set by timmer0 interrupt
@@ -23,10 +23,17 @@
 //#define TRIGGER_LEVEL 0 //adc threshold to check for, before collecting samples
 #define TRIGGER_LEVEL (ADCOFFSET + ADCOFFSET/2)//adc threshold to check for, before collecting samples
 
-#if ADCBITS > 6
+//ADC bit resolution 
+#if ADCBITS > 8
+typedef int16_t samp_buf_t;
 typedef uint16_t adc_t;
 #else
 typedef uint8_t adc_t;
+#if ADCBITS < 7
+typedef int8_t samp_buf_t;
+#else
+typedef int16_t samp_buf_t;
+#endif
 #endif
 
 //debug. uncomment to print debug info

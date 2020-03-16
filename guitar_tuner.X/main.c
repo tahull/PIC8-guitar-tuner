@@ -7,10 +7,11 @@
 #include "mcc_generated_files/mcc.h"
 #include "guitar_tuner.h"
 #include "tuning.h"
+#include "amdf.h"
 
 
 //global vars
-int16_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
+samp_buf_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
 enum ge_state {scan,collect,process,pause} ge_gt_state; //sampling states
 
 //function prototypes
@@ -47,6 +48,12 @@ void TMR0_Interrupt(void){
 /* read adc, using this rather than mcc's ADC_GetConversion(adc_channel_t channel)
  * function. Since this project is using one adc channel 
  * and doesn't switch the channel on/off, it doesn't need acq delay
+ * 
+ * Allow selecting adc bit resolution 1-16, this mcu is up to 10 bit resolution
+ * support for sub 3 bit and above 10 bit is here just for implementing in a 
+ * generalized form although pointless.
+ * 
+ * Assumes ADC result is left justified
  */
 adc_t ADC_read(void){
     // Start the conversion
@@ -55,7 +62,7 @@ adc_t ADC_read(void){
     while (ADCON0bits.GO_nDONE);
     // Conversion finished, return the result
 #if ADCBITS > 8
-    return (((uint16_t)(ADRESH << 8) + ADRESL)>>6);
+    return (((uint16_t)(ADRESH << 8) + ADRESL)>>(16-ADCBITS));
 #else
     return ADRESH >> (8-ADCBITS); 
 #endif
