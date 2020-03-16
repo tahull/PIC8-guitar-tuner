@@ -29,46 +29,55 @@ uint16_t amdf(uint16_t len, samp_buf_t *arr, uint16_t fs){
             if (diff < 0)
                 diff = -diff;
             alpha += (uint16_t)diff; // sum up elements at k
-//            if (sum > thresh){
-//                printf("problem %u", sum);
-//                break;
-//            }
         }
         //Find first peak
         if(state == 0 && (int16_t)(alpha - beta) <= 0){
             thresh = beta/2; // set new threshold, low enough to ignore harmonics
             state = 1;
         }
-        //Find the index of the first lowest point
-        else if(state == 1 && (beta < thresh) && (int16_t)(beta - alpha) < 0){
-            period = k - 1;
-//no debug
-#ifndef PRINT_AMDF_DEBUG
+        //Find the index of the first lowest point in valid range
+        else if(k > T_MIN){
+            if(state == 1 && (beta < thresh) && (int16_t)(beta - alpha) < 0){
+                period = k - 1;
+//do debug messages
+#ifdef PRINT_AMDF_DEBUG
+            printf("%u]\n",alpha); // print final amdf array element
+#endif
+                break;
+            }
+        }
+        //couldn't find a period within valid range
+        else if (k > T_MAX){
+//do debug messages
+#ifdef PRINT_AMDF_DEBUG
+            // print final amdf array element of failed attempt
+            printf("%u]\n Could not find a valid period within: %u to %u ",alpha,T_MIN,T_MAX); 
+#endif
             break;
         }
+#ifdef PRINT_AMDF_DEBUG
+        printf("%u,",alpha); // print amdf array element
+#endif
     }
     //parabolic peak interpolation. +/- amount to adjust current period
-    period_adjust = (((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/((int16_t)(2*(2*beta - alpha - gamma)));
+    period_adjust = interp(alpha, beta, gamma);//(((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/((int16_t)(2*(2*beta - alpha - gamma)));
     // calc frequency relative to sampling frequency
-    f = (((uint32_t)fs*10)<<FIXED_POINT_INTP_SHIFT)/((period<<FIXED_POINT_INTP_SHIFT) + period_adjust);
-//do debug messages
-#else
-            printf("%u]\n",alpha); // print final amdf array element
-            break;
-        }
-        printf("%u,",alpha); // print amdf array element
-    }
-    f = ((uint32_t)fs*10)/period;
+    f = (((uint32_t)fs*10)<<FIXED_POINT_INTP_SHIFT)/((period<<FIXED_POINT_INTP_SHIFT) + period_adjust);        
+#ifdef PRINT_AMDF_DEBUG
+    uint16_t f_raw = ((uint32_t)fs*10)/period;
 
     printf("T: %u, pre interpolated f: %u.%u\n", \
-            period,(uint16_t)(f/10),(uint16_t)(f%10));
+            period,(uint16_t)(f_raw/10),(uint16_t)(f_raw%10));
     
-    //parabolic peak interpolation. +/- amount to adjust current period
-    period_adjust = (((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/((int16_t)(2*(2*beta - alpha - gamma)));
-    // calc frequency relative to sampling frequency
-    f = (((uint32_t)fs*10)<<FIXED_POINT_INTP_SHIFT)/((period<<FIXED_POINT_INTP_SHIFT) + period_adjust);
     printf("adj: .%i interpolated f %u.%u\n", period_adjust, \
             (uint16_t)(f/10),(uint16_t)(f%10));
 #endif
     return f;
 }
+
+int16_t interp(int16_t alpha, int16_t beta, int16_t gamma){
+    int16_t intp = 0;
+    intp = (((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/((int16_t)(2*(2*beta - alpha - gamma)));
+    return intp;
+}
+

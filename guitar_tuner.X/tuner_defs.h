@@ -24,6 +24,12 @@
 // set as +50% of the offset
 #define TRIGGER_LEVEL (ADCOFFSET + ADCOFFSET/2)//adc threshold to check for, before collecting samples
 
+// frequency limits. expected range of 50 hz to 400 hz
+#define F_MIN 50
+#define F_MAX 400
+#define T_MIN FS/F_MAX      //minimum period normalized to sample frequency
+#define T_MAX FS/F_MIN      //maximum period normalized to sample frequency  
+
 //ADC bit resolution 
 #if ADCBITS > 8
 typedef int16_t samp_buf_t;
