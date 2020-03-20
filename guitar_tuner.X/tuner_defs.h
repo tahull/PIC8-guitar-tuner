@@ -28,7 +28,13 @@
 #define F_MIN 50
 #define F_MAX 400
 #define T_MIN FS/F_MAX      //minimum period normalized to sample frequency
-#define T_MAX FS/F_MIN      //maximum period normalized to sample frequency  
+#define T_MAX FS/F_MIN      //maximum period normalized to sample frequency 
+
+//DSP tyes, autocorrelation or IIR low pass filter
+#define AMDF    0
+#define IIR     1
+
+#define TUNER_MODE IIR
 
 //ADC bit resolution 
 #if ADCBITS > 8
@@ -44,7 +50,7 @@ typedef int16_t samp_buf_t;
 #endif
 
 //debug. uncomment to print debug info
-//#define PRINT_SIGNAL_DEBUG    // Raw ADC sample buffer
+#define PRINT_SIGNAL_DEBUG    // Raw ADC sample buffer
 //#define PRINT_AMDF_DEBUG      // Processed amdf vals
 //#define PRINT_TUNING_DEBUG    // Tuner display stuff
 

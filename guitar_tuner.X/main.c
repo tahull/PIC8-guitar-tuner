@@ -20,6 +20,21 @@ adc_t ADC_read(void);
 void print_array(uint16_t len, int16_t *arr);
 #endif
 
+int16_t a1 = -433, a2 = 210, b0 = 20, b1 = -22, b2 = 20; // fc = 370 hz
+static inline int16_t iir_df1(int16_t x0){
+    static int16_t x1,x2,y1,y2;
+    int32_t yn;
+    
+    yn = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
+    yn >>= 8;
+    x2 = x1;
+    x1 = x0;
+    y2 = y1;
+    y1 = yn;
+    return yn;
+}
+
+
 /* Timer interrupt for adc sample frequency     
  */
 void TMR0_Interrupt(void){
@@ -34,6 +49,7 @@ void TMR0_Interrupt(void){
     if (ge_gt_state == scan && adc_val > TRIGGER_LEVEL)
         ge_gt_state = collect;
     if (ge_gt_state == collect){
+#if TUNER_MODE == AMDF
         if(idx < SAMPLE_SIZE){
             gia16_samples[idx] = adc_val - ADCOFFSET;
             idx++;
@@ -42,6 +58,17 @@ void TMR0_Interrupt(void){
             idx = 0;
             ge_gt_state = process;
         }
+#else
+        if(idx < SAMPLE_SIZE){  //test 256 fixed point IIR fc = 370         
+            gia16_samples[idx] = iir_df1(adc_val - ADCOFFSET);
+            idx++;
+        }
+        else{
+            idx = 0;
+            ge_gt_state = process;
+        }
+        
+#endif
     }
 }
 
@@ -118,14 +145,13 @@ void main(void)
         if(ge_gt_state == process){
             ge_gt_state = pause;
             INTERRUPT_GlobalInterruptDisable();
+            uint16_t f = amdf(SAMPLE_SIZE, gia16_samples, FS);
             
 #ifdef PRINT_SIGNAL_DEBUG
             //print the original array
+            printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             print_array(SAMPLE_SIZE, gia16_samples);
 #endif
-            
-            uint16_t f = amdf(SAMPLE_SIZE, gia16_samples, FS);
-            //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             tuner_display(f);
             
             ge_gt_state = scan;
