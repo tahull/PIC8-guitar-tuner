@@ -44,9 +44,10 @@ typedef int16_t samp_buf_t;
 #endif
 
 //debug. uncomment to print debug info
-//#define PRINT_SIGNAL_DEBUG    // Raw ADC sample buffer
-//#define PRINT_AMDF_DEBUG      // Processed amdf vals
-//#define PRINT_TUNING_DEBUG    // Tuner display stuff
+//#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
+//#define AMDF_DEBUG          // Processed amdf vals
+//#define INTP_DEBUG          // Print interpolation debug info
+//#define TUNE_DISPLAY_DEBUG  // Tuner display stuff
 
 
 #endif	/* GUITAR_TUNER_H */
