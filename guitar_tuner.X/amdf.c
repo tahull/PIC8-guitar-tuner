@@ -88,7 +88,7 @@ int16_t interp(int16_t alpha, int16_t beta, int16_t gamma){
     printf("alpha: %i beta: %i gamma: %i \n",alpha,beta,gamma);
     printf("A: %i A_shifted: %li B: %i A_shifted/B: %i \n",A,A_shift,B,intp);    
 #else
-    intp = (((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/((2*beta - alpha - gamma));
+    intp = (((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/(2*(2*beta - alpha - gamma));
 #endif
     return intp;
 }
