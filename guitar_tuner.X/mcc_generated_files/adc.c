@@ -71,8 +71,8 @@ void ADC_Initialize(void)
     // GO_nDONE stop; ADON enabled; CHS AN0; 
     ADCON0 = 0x01;
     
-    // ADFM left; ADNREF VSS; ADPREF FVR; ADCS Frc; 
-    ADCON1 = 0x73;
+    // ADFM left; ADNREF VSS; ADPREF FVR; ADCS FOSC/32; 
+    ADCON1 = 0x23;
     
     // ADRESL 0; 
     ADRESL = 0x00;

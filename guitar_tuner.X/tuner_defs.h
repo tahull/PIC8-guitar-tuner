@@ -19,7 +19,7 @@
 #define ADCVREF 4096    //fvr positive reference voltage 4.096v
 // adc offset. ex for 10 bit
 // 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
-#define ADCOFFSET (VBIAS/(ADCVREF/(1<<ADCBITS)))
+#define ADCOFFSET 368//(VBIAS/((ADCVREF)/(1<<ADCBITS)))
 // adc threshold to check for, before collecting samples
 // set as +50% of the offset
 #define TRIGGER_LEVEL (ADCOFFSET + ADCOFFSET/2)//adc threshold to check for, before collecting samples

@@ -34,13 +34,26 @@ static inline int16_t iir_df1(int16_t x0){
     return yn;
 }
 
+static inline uint8_t zc(int16_t yn){
+    static int16_t a,b;
+
+    b = a;
+    a = yn;
+    
+    if(a >= 0 && b < 0)
+        return 1;
+    return 0;    
+}
+// clean up
+uint8_t  state;
+uint16_t avg,avg_cnt, cnt, point, diff, accum;
 
 /* Timer interrupt for adc sample frequency     
  */
 void TMR0_Interrupt(void){
-    static uint16_t idx;
+    static uint16_t idx,crossings;
     static adc_t adc_val;
-    
+        
     adc_val = ADC_read();
     
     // found a loud signal, is if from a guitar?, does it matter?
@@ -59,14 +72,37 @@ void TMR0_Interrupt(void){
             ge_gt_state = process;
         }
 #else
-        if(idx < SAMPLE_SIZE){  //test 256 fixed point IIR fc = 370         
-            gia16_samples[idx] = iir_df1(adc_val - ADCOFFSET);
-            idx++;
+        if(avg_cnt < 20){  //test 256 fixed point IIR fc = 370
+            int16_t yn;
+            yn = iir_df1(adc_val - ADCOFFSET);
+            
+            if(zc(yn)){//count idx difference between crossing, average period
+                if(point > 0){
+                    accum += cnt - point;
+                    avg_cnt++;
+                }
+                point = cnt;
+                
+            }
+            cnt++;
         }
         else{
-            idx = 0;
+            avg = ((uint32_t)accum<<8)/avg_cnt;
+            avg_cnt = 0;
+            accum = 0;
+            cnt = 0;            
+            point = 0;            
             ge_gt_state = process;
         }
+        
+//        if(idx < SAMPLE_SIZE){
+//            gia16_samples[idx] = yn;            
+//            idx++;            
+//        }
+//        else{
+//            idx = 0;
+//            ge_gt_state = process;
+//        }
         
 #endif
     }
@@ -143,14 +179,22 @@ void main(void)
     while (1)
     {
         if(ge_gt_state == process){
+            uint16_t f = 0;
             ge_gt_state = pause;
             INTERRUPT_GlobalInterruptDisable();
+            
+#if TUNER_MODE == AMDF
             uint16_t f = amdf(SAMPLE_SIZE, gia16_samples, FS);
+#else
+            f = (((uint32_t)FS*10)<<8)/avg;
+            printf("avg: %i \n",avg);
+            
+#endif
             
 #ifdef PRINT_SIGNAL_DEBUG
             //print the original array
             printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
-            print_array(SAMPLE_SIZE, gia16_samples);
+            //print_array(SAMPLE_SIZE, gia16_samples);
 #endif
             tuner_display(f);
             
