@@ -11,8 +11,8 @@
 
 
 //global vars
-samp_buf_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
-enum ge_state {scan,collect,process,pause} ge_gt_state; //sampling states
+samp_t sample_buff[SAMPLE_SIZE] = { 0 }; //samples from adc
+enum tuner {SCAN,COLLECT,PROCESS,PAUSE} tuner_state; //sampling states
 
 //function prototypes
 adc_t ADC_read(void);
@@ -31,16 +31,16 @@ void TMR0_Interrupt(void){
     // found a loud signal, is if from a guitar?, does it matter?
     // TODO: test if it's worth additional testing, like checking for a second
     // peak and checking if the period falls in an expected range
-    if (ge_gt_state == scan && adc_val > TRIGGER_LEVEL)
-        ge_gt_state = collect;
-    if (ge_gt_state == collect){
+    if (tuner_state == SCAN && adc_val > TRIGGER_LEVEL)
+        tuner_state = COLLECT;
+    if (tuner_state == COLLECT){
         if(idx < SAMPLE_SIZE){
-            gia16_samples[idx] = adc_val - ADCOFFSET;
+            sample_buff[idx] = adc_val - ADCOFFSET;
             idx++;
         }
         else{
             idx = 0;
-            ge_gt_state = process;
+            tuner_state = PROCESS;
         }
     }
 }
@@ -115,20 +115,20 @@ void main(void)
     
     while (1)
     {
-        if(ge_gt_state == process){
-            ge_gt_state = pause;
+        if(tuner_state == PROCESS){
+            tuner_state = PAUSE;
             INTERRUPT_GlobalInterruptDisable();
             
 #ifdef RAW_SIGNAL_DEBUG
             //print the original array
-            print_array(SAMPLE_SIZE, gia16_samples);
+            print_array(SAMPLE_SIZE, sample_buff);
 #endif
             
-            uint16_t f = amdf(SAMPLE_SIZE, gia16_samples, FS);
+            uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS);
             //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             tuner_display(f);
             
-            ge_gt_state = scan;
+            tuner_state = SCAN;
             INTERRUPT_GlobalInterruptEnable();
         }
     }

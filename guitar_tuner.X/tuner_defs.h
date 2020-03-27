@@ -32,14 +32,14 @@
 
 //ADC bit resolution 
 #if ADCBITS > 8
-typedef int16_t samp_buf_t;
+typedef int16_t samp_t;
 typedef uint16_t adc_t;
 #else
 typedef uint8_t adc_t;
 #if ADCBITS < 7
-typedef int8_t samp_buf_t;
+typedef int8_t samp_t;
 #else
-typedef int16_t samp_buf_t;
+typedef int16_t samp_t;
 #endif
 #endif
 
