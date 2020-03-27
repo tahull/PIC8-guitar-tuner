@@ -25,7 +25,7 @@
  * @Return
  *  uint16_t : return frequency with decimal shifted, ex frequency of 82.4 will be 824
 */
-uint16_t amdf(uint16_t len, samp_buf_t *arr, uint16_t fs);
+uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs);
 
 
 /* @Summary

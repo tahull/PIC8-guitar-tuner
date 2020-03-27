@@ -11,12 +11,12 @@
 
 
 //global vars
-samp_buf_t gia16_samples[SAMPLE_SIZE] = { 0 }; //samples from adc
-enum ge_state {scan,collect,process,pause} ge_gt_state; //sampling states
+samp_t sample_buff[SAMPLE_SIZE] = { 0 }; //samples from adc
+enum tuner {SCAN,COLLECT,PROCESS,PAUSE} tuner_state; //sampling states
 
 //function prototypes
 adc_t ADC_read(void);
-#ifdef PRINT_SIGNAL_DEBUG
+#ifdef RAW_SIGNAL_DEBUG
 void print_array(uint16_t len, int16_t *arr);
 #endif
 
@@ -53,23 +53,23 @@ uint16_t avg,avg_cnt, cnt, point, diff, accum;
 void TMR0_Interrupt(void){
     static uint16_t idx,crossings;
     static adc_t adc_val;
-        
+
     adc_val = ADC_read();
     
     // found a loud signal, is if from a guitar?, does it matter?
     // TODO: test if it's worth additional testing, like checking for a second
     // peak and checking if the period falls in an expected range
-    if (ge_gt_state == scan && adc_val > TRIGGER_LEVEL)
-        ge_gt_state = collect;
-    if (ge_gt_state == collect){
+    if (tuner_state == SCAN && adc_val > TRIGGER_LEVEL)
+        tuner_state = COLLECT;
+    if (tuner_state == COLLECT){
 #if TUNER_MODE == AMDF
         if(idx < SAMPLE_SIZE){
-            gia16_samples[idx] = adc_val - ADCOFFSET;
+            sample_buff[idx] = adc_val - ADCOFFSET;
             idx++;
         }
         else{
             idx = 0;
-            ge_gt_state = process;
+            tuner_state = PROCESS;
         }
 #else
         if(avg_cnt < 20){  //test 256 fixed point IIR fc = 370
@@ -92,16 +92,16 @@ void TMR0_Interrupt(void){
             accum = 0;
             cnt = 0;            
             point = 0;            
-            ge_gt_state = process;
+            tuner_state = PROCESS;
         }
         
 //        if(idx < SAMPLE_SIZE){
-//            gia16_samples[idx] = yn;            
+//            sample_buff[idx] = yn;            
 //            idx++;            
 //        }
 //        else{
 //            idx = 0;
-//            ge_gt_state = process;
+//            tuner_state = PROCESS;
 //        }
         
 #endif
@@ -133,7 +133,7 @@ adc_t ADC_read(void){
 
 /* Print the sample array
  */
-#ifdef PRINT_SIGNAL_DEBUG
+#ifdef RAW_SIGNAL_DEBUG
 void print_array(uint16_t len, int16_t *arr){
     printf("orig_signal = [");
     for(uint16_t i = 0; i < len; i++ )
@@ -172,33 +172,31 @@ void main(void)
     TMR0_SetInterruptHandler(TMR0_Interrupt);
     ADC_SelectChannel(channel_AN11);
     
-#ifdef PRINT_SIGNAL_DEBUG
+#ifdef RAW_SIGNAL_DEBUG
     printf("adc offset: %d adc trigger: %d \n", ADCOFFSET, TRIGGER_LEVEL);
 #endif  
     
     while (1)
     {
-        if(ge_gt_state == process){
+        if(tuner_state == PROCESS){
             uint16_t f = 0;
-            ge_gt_state = pause;
+            tuner_state = PAUSE;
             INTERRUPT_GlobalInterruptDisable();
-            
 #if TUNER_MODE == AMDF
-            uint16_t f = amdf(SAMPLE_SIZE, gia16_samples, FS);
+            f = amdf(SAMPLE_SIZE, gia16_samples, FS);
 #else
             f = (((uint32_t)FS*10)<<8)/avg;
             printf("avg: %i \n",avg);
             
-#endif
-            
-#ifdef PRINT_SIGNAL_DEBUG
+#endif            
+#ifdef RAW_SIGNAL_DEBUG
             //print the original array
             printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             //print_array(SAMPLE_SIZE, gia16_samples);
 #endif
             tuner_display(f);
             
-            ge_gt_state = scan;
+            tuner_state = SCAN;
             INTERRUPT_GlobalInterruptEnable();
         }
     }
