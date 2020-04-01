@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # sample frequency
-fs =5000
+fs = 3906
 # set frequency
 #f = 82.4 #e2
 f = 329.6 #e4
@@ -22,7 +22,9 @@ t = np.arange(0,samples/fs,1.0/fs) #entire chunk of signal
 fundamental = A*np.sin(2 * np.pi * f * t) 
 # add some harmonics
 second_harmonic = 3*A*np.sin(2 * np.pi *2* f * t) 
-third_harmonic = 2*A*np.sin(2 * np.pi *3* f * t) 
+third_harmonic = 2*A*np.sin(2 * np.pi *3* f * t)
+fourth_harmonic = .5*A*np.sin(2 * np.pi *4* f * t)
+fith_harmonic = .3*A*np.sin(2 * np.pi *5* f * t)    
 
 # signal y(t) is the sum of its harmonics
 yt = (fundamental + second_harmonic + third_harmonic) + vbias

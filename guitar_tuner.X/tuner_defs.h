@@ -10,13 +10,15 @@
 #include <stdint.h>
 
 //guitar tuner config
-#define FS 5000 //sample frequency set by timmer interrupt rate
+//#define FS 5000 //sample frequency set by timmer interrupt rate
+#define FS 3906 //sample frequency set by timmer interrupt rate
 #define SAMPLE_SIZE 128  //size of signal sample array
 
 #define ADCBITS 10
 //voltage bias from amplifier circuit in milli volts
 #define VBIAS 1.8    //1.8v
-#define ADCVREF 4.096    //fvr positive reference voltage 4.096v
+//#define ADCVREF 4.096 //fvr positive reference voltage 4.096v. fvr bug in sim? set to 5v for simulation
+#define ADCVREF 5
 // adc offset. ex for 10 bit
 // 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
 #define ADCOFFSET (int16_t)(VBIAS/((double)ADCVREF/(1<<ADCBITS)))
@@ -33,7 +35,7 @@
 //DSP tyes, autocorrelation or IIR low pass filter
 #define AMDF    0
 #define IIR     1
-
+//set which mode to use, AMDF or IIR
 #define TUNER_MODE IIR
 
 //ADC bit resolution 
@@ -53,6 +55,7 @@ typedef int16_t samp_t;
 //#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
 //#define AMDF_DEBUG          // Processed amdf vals
 //#define INTP_DEBUG          // Print interpolation debug info
+//#define ZC_DEBUG
 //#define TUNE_DISPLAY_DEBUG  // Tuner display stuff
 
 
