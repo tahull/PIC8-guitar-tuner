@@ -10,10 +10,10 @@
 #include <stdint.h>
 
 //guitar tuner config
-#define FS 5000 //sample frequency set by timmer interrupt rate
+#define FS 4943 //sample frequency set by timmer interrupt rate
 #define SAMPLE_SIZE 128  //size of signal sample array
 
-#define ADCBITS 10
+#define ADCBITS 7
 //voltage bias from amplifier circuit in milli volts
 #define VBIAS 1.8    //1.8v
 #define ADCVREF 4.096    //fvr positive reference voltage 4.096v
@@ -36,7 +36,7 @@ typedef int16_t samp_t;
 typedef uint16_t adc_t;
 #else
 typedef uint8_t adc_t;
-#if ADCBITS < 7
+#if ADCBITS < 8
 typedef int8_t samp_t;
 #else
 typedef int16_t samp_t;
@@ -44,7 +44,7 @@ typedef int16_t samp_t;
 #endif
 
 //debug. uncomment to print debug info
-#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
+//#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
 //#define AMDF_DEBUG          // Processed amdf vals
 //#define INTP_DEBUG          // Print interpolation debug info
 //#define TUNE_DISPLAY_DEBUG  // Tuner display stuff

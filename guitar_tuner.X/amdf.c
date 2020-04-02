@@ -24,7 +24,7 @@ uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs){
         beta = alpha;
         alpha = 0;
         for(uint16_t n = 0; n < (len-k); n++){
-            diff = (arr[n]-arr[n+k])>>4; // sums get too large divide to avoid overflow
+            diff = (arr[n]-arr[n+k]); // sums get too large divide to avoid overflow
             //printf("an[%i]=%i an+k[%i+%i]=%i diff=%i \n",n,arr[n],n,k,arr[n+k],diff);
             if (diff < 0)
                 diff = -diff;
@@ -32,7 +32,7 @@ uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs){
         }
         //Find first peak
         if(state == 0 && (alpha - beta) <= 0){
-            thresh = beta/2; // set new threshold, low enough to ignore harmonics
+            thresh = beta/5; // set new threshold, low enough to ignore harmonics
             state = 1;
         }
         //Find the index of the first lowest point in valid range

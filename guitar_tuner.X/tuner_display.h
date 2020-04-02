@@ -11,7 +11,10 @@
 #include <stdio.h>
 #include "tuner_defs.h"
 
-#define TUNING_ACCURACY 15 // 15 -> +/- 1.5 hz accuracy
+#define TUNING_ACCURACY 4 // 4 -> +/- 0.4 hz accuracy
+#define TUNING_ACCURACY2 TUNING_ACCURACY*2
+#define TUNING_ACCURACY3 TUNING_ACCURACY*3
+
 // standard tuning
 #define E2 824  //82.4 Hz
 #define A2 1100 //110.0 Hz

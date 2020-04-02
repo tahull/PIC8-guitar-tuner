@@ -25,12 +25,24 @@ void tuner_display(uint16_t f){
                 printf("---(%s)---\n",note_name[i]);
             }
             //pitch too high
-            else if(f > notes[i]){
+            else if(f >= notes[i] + (TUNING_ACCURACY3+i)){
                 printf("---(%s)<<<\n",note_name[i]);
             }
+            else if(f >= notes[i] + (TUNING_ACCURACY2+i)){
+                printf("---(%s)<<-\n",note_name[i]);
+            }
+            else if(f >= notes[i] + (TUNING_ACCURACY+i)){
+                printf("---(%s)<--\n",note_name[i]);
+            }
             //pitch too low
-            else{
+            else if(f <= notes[i] - (TUNING_ACCURACY3+i)){
                 printf(">>>(%s)---\n",note_name[i]);
+            }
+            else if(f <= notes[i] - (TUNING_ACCURACY2+i)){
+                printf("->>(%s)---\n",note_name[i]);
+            }
+            else if(f <= notes[i] - (TUNING_ACCURACY+i)){
+                printf("-->(%s)---\n",note_name[i]);
             }
             break;
         }
