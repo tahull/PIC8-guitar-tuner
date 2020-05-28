@@ -13,12 +13,12 @@
   @Description
     This source file provides implementations for driver APIs for ADC.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.80.0
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.81.0
         Device            :  PIC16F1829
         Driver Version    :  2.01
     The generated drivers are tested against the following:
         Compiler          :  XC8 2.10 and above
-        MPLAB             :  MPLAB X 5.30
+        MPLAB             :  MPLAB X 5.35
 */
 
 /*
@@ -90,14 +90,14 @@ void ADC_SelectChannel(adc_channel_t channel)
     ADCON0bits.ADON = 1;  
 }
 
-void ADC_StartConversion()
+void ADC_StartConversion(void)
 {
     // Start the conversion
     ADCON0bits.GO_nDONE = 1;
 }
 
 
-bool ADC_IsConversionDone()
+bool ADC_IsConversionDone(void)
 {
     // Start the conversion
    return ((bool)(!ADCON0bits.GO_nDONE));

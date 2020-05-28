@@ -46,7 +46,7 @@
       </entry>
    </usedClasses>
    <usedLibraries class="java.util.ArrayList">
-      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.mcu8.Mcu8PeripheralLibrary" version="1.80.0"/>
+      <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.mcu8.Mcu8PeripheralLibrary" version="1.81.0"/>
       <ILibraryFile class="com.microchip.mcc.core.library.BaseLibraryFile" libraryClass="com.microchip.mcc.boardsupportlibrary.BoardSuppportLibrary" version="0.95.1"/>
    </usedLibraries>
    <tokenMap class="java.util.HashMap">
@@ -435,12 +435,12 @@
          <value>1</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="EUSART" registerAlias="TXI" settingAlias="flag"/>
-         <value>disabled</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="ADC" registerAlias="ADCON0" settingAlias="CHS" alias="AN1"/>
          <value>1</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="EUSART" registerAlias="TXI" settingAlias="flag"/>
+         <value>disabled</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="EUSART" registerAlias="BAUDCON" settingAlias="BRG16"/>
@@ -1835,12 +1835,12 @@
          <value>0</value>
       </entry>
       <entry>
-         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="EUSART" registerAlias="BAUDCON" settingAlias="ABDOVF" alias="overflow"/>
-         <value>1</value>
-      </entry>
-      <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="ADC" registerAlias="ADCON1" settingAlias="ADNREF"/>
          <value>VSS</value>
+      </entry>
+      <entry>
+         <key class="com.microchip.mcc.core.tokenManager.OptionKey" moduleName="EUSART" registerAlias="BAUDCON" settingAlias="ABDOVF" alias="overflow"/>
+         <value>1</value>
       </entry>
       <entry>
          <key class="com.microchip.mcc.core.tokenManager.SettingKey" moduleName="Pin Module" registerAlias="APFCON1" settingAlias="P1CSEL"/>
@@ -3426,71 +3426,71 @@
    <generatedFileHashHistoryMap class="java.util.HashMap">
       <entry>
          <file>mcc_generated_files/interrupt_manager.h</file>
-         <hash>7b76cb8a6fb55f06175b99c8e3012b9ccc7840501d9c4b53bcb41338755bc2ad</hash>
+         <hash>ad2f63c47d4cae4f9380c5315ac77fbf0f63136478161e29106df1209dc020e1</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/fvr.c</file>
-         <hash>2b84edbc8e565e1df63a8511661939442dd95ae8acae7d83a625c72dfcb1c54f</hash>
+         <hash>e764829f8afcd1eccd0f625c557e3d8fd8b73c957870dfd5b1f560d214f5eecf</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/tmr0.c</file>
-         <hash>072f5cc1292545dfbd50b4ac1d7cb1ca3cf8592704e843194ea9956504503cf5</hash>
+         <hash>e4d8d5c8eb3c51cb667e42f1899176c527ae798cfbb208a4da6929a60cfc5802</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/pin_manager.h</file>
-         <hash>1bfb38eb2f5d9aa432e2945a0f57c4c1b07f79f3d37064acedfc6e3cee1205b9</hash>
-      </entry>
-      <entry>
-         <file>main.c</file>
-         <hash>d2f6d34370f3cfb80c7c46a5a92f6b7c0de363c191fb6ac0b7c0c3b638a2ab75</hash>
+         <hash>d70f127af598c6ddfd21bb2abfc831c6bc05b6e53af8fe7d3ff39beeed68a7c8</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/eusart.c</file>
-         <hash>3db2c10155e66d17a9648a7394c9aa0388c95967fd4f76f5b97c516ad4e60617</hash>
+         <hash>26e1c8f15dcf8ac46951d119a14947874c022eec7fe0ef2dd86ea632d83687a3</hash>
+      </entry>
+      <entry>
+         <file>main.c</file>
+         <hash>26c77343d34adaa7a9c0daaa67be4d19cebeb1e8cbda398aa2ca9cc8384849f6</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/adc.h</file>
-         <hash>b04254adf308a4c9bbbb11d1106015a251d1b9cfc252f45b53c9264b4ef34fe4</hash>
+         <hash>577d57ae07c93da79dfbb883e376551c072df15dad0d5d6bbe67ce15693351b0</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/tmr0.h</file>
-         <hash>5623bb1829f38015023441a42b951c1ff2d2b810c527e8b6f1060c905f300860</hash>
+         <hash>518695e8b307aebc78eb015bfaeb5f043c553606aff93283999c6ed09a2c16d3</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/device_config.h</file>
-         <hash>9f9a0b71faa4cd5db04462829a5d3c7ace56667007b0fe3d5b9058c11791bc18</hash>
+         <hash>daa3efe0272980cb9047ffdaed0267c52475dbe60f1c6b4245d5c24a252dce2e</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/adc.c</file>
-         <hash>dd1a407bb66e230899158ade20ffdcc595c80e427e910178a0c25951f40ca42f</hash>
+         <hash>74823f82449a5467f7609a7f2e37129c4153739fb4973dcc0d87d2590e9d6fc7</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/mcc.h</file>
-         <hash>fc3d8a13bc73464389ead5404fd368ba78e7f968134fa3b0fa65dabb92bd0286</hash>
+         <hash>5c73ad392daecab1dcf78a21649bb0c7799d41b8279b7f671023a638071e2e4d</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/device_config.c</file>
-         <hash>f47d495aca9ef475723fe0f482db5d00290510bf85f7f0a1e980445ca5ef704e</hash>
-      </entry>
-      <entry>
-         <file>mcc_generated_files/interrupt_manager.c</file>
-         <hash>bf7e0905f6b3cc4ac938b91150964105a80d7be40b68128e25c786292e39da6e</hash>
+         <hash>9ab16726d7484e423418e084899fbdd7b023e0b18bce3008b508d9fe709718c3</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/eusart.h</file>
-         <hash>92d01e589330895a99e719226387020bc82f68bac3f4df6988e0d06ff7d5c2e6</hash>
+         <hash>acba514733e11176f15d20544cf28f31375b79b50a99326043552148e4861250</hash>
+      </entry>
+      <entry>
+         <file>mcc_generated_files/interrupt_manager.c</file>
+         <hash>3d2bb142f686e97cae46d7a422f19f36bb4a0feaddac104238dd47bbc0dcd41e</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/mcc.c</file>
-         <hash>85f361a456af4a0e715c635195b43efed31007c82567a5196cdbd153d53f219d</hash>
+         <hash>06545106a73256cdb0f196d4ae3620d9a71aec8301c8ebe9dcfc3b8ba58f06f6</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/fvr.h</file>
-         <hash>6575bcebbc5208ed08fe0a9c7e1cd99819f873ce2132077be86cb2a101da1c8f</hash>
+         <hash>9a902f2972d622b88b4567d616f5017c18b741cb25960206528aa0dd6a72ee90</hash>
       </entry>
       <entry>
          <file>mcc_generated_files/pin_manager.c</file>
-         <hash>ae144c7631a095e6f7944139b3ace21adfb55e196b2b278e865ddd2bcb0b4204</hash>
+         <hash>086ae72ef606bd650124f67e0d4e3dbc2f62a14192aa631e6130ba29ab56db87</hash>
       </entry>
    </generatedFileHashHistoryMap>
    <mc3libFileHashHistoryMap class="java.util.HashMap"/>
