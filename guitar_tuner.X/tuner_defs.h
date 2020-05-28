@@ -16,7 +16,7 @@
 #define ADCBITS 7
 //voltage bias from amplifier circuit in milli volts
 #define VBIAS 1.8    //1.8v
-#define ADCVREF 4.096    //fvr positive reference voltage 4.096v
+#define ADCVREF 5//4.096    //fvr positive reference voltage 4.096v
 // adc offset. ex for 10 bit
 // 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
 #define ADCOFFSET (int16_t)(VBIAS/((double)ADCVREF/(1<<ADCBITS)))

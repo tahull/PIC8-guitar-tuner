@@ -17,7 +17,7 @@ enum tuner {SCAN,COLLECT,PROCESS,PAUSE} tuner_state; //sampling states
 //function prototypes
 adc_t ADC_read(void);
 #ifdef RAW_SIGNAL_DEBUG
-void print_array(uint16_t len, int16_t *arr);
+void print_array(uint16_t len, samp_t *arr);
 #endif
 
 /* Timer interrupt for adc sample frequency     
@@ -71,7 +71,7 @@ adc_t ADC_read(void){
 /* Print the sample array
  */
 #ifdef RAW_SIGNAL_DEBUG
-void print_array(uint16_t len, int16_t *arr){
+void print_array(uint16_t len, samp_t *arr){
     printf("orig_signal = [");
     for(uint16_t i = 0; i < len; i++ )
         if(i == len-1) // last item. no comma
@@ -125,7 +125,7 @@ void main(void)
 #endif
             
             uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS);
-            //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
+            printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             tuner_display(f);
             
             tuner_state = SCAN;

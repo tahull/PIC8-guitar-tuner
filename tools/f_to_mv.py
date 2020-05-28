@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # sample frequency
-fs =5000
+fs = 4943
 # set frequency
 #f = 82.4 #e2
 f = 329.6 #e4

@@ -15,10 +15,10 @@ void tuner_display(uint16_t f){
         //if frequency is between lower_range and upper_range
         if(f >= trans[i] && f < trans[i+1]){
 #ifdef TUNE_DISPLAY_DEBUG
-            printf("found: %u.%u target: %u.%u upper lim: %u\n", \
+            printf("found: %u.%u target: %u.%u between: %u to %u\n", \
                     (uint16_t)(f/10),(uint16_t)(f%10), \
                     (uint16_t)(notes[i]/10),(uint16_t)(notes[i]%10),\
-                    (uint16_t)(trans[i+1]/10),(uint16_t)(trans[i+1]%10));
+                    (uint16_t)(trans[i]/10),(uint16_t)(trans[i+1]/10));
 #endif
             //check if frequency 'f' is in an acceptable accuracy range for 'good tuning
             if(f >= notes[i] - (TUNING_ACCURACY+i) && f <= notes[i] + (TUNING_ACCURACY+i)){
