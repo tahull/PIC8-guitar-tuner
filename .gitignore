@@ -27,3 +27,8 @@ nb-configuration.xml
 #mcc
 *.mc3.bak
 
+#ltspice
+/ltspice/*.raw
+/ltspice/*.log
+/ltspice/*.imp
+

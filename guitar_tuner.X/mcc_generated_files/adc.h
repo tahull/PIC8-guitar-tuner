@@ -13,12 +13,12 @@
   @Description
     This header file provides APIs for driver for ADC.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.80.0
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.81.3
         Device            :  PIC16F1829
         Driver Version    :  2.01
     The generated drivers are tested against the following:
-        Compiler          :  XC8 2.10 and above
-        MPLAB             :  MPLAB X 5.30
+        Compiler          :  XC8 2.20 and above
+        MPLAB             :  MPLAB X 5.40
 */
 
 /*
@@ -190,7 +190,7 @@ void ADC_SelectChannel(adc_channel_t channel);
     convertedValue = ADC_GetConversionResult();
     </code>
 */
-void ADC_StartConversion();
+void ADC_StartConversion(void);
 
 /**
   @Summary
@@ -201,7 +201,7 @@ void ADC_StartConversion();
     When conversion is complete routine returns true. It returns false otherwise.
 
   @Preconditions
-    ADC_Initialize() and ADC_StartConversion(adc_channel_t channel)
+    ADC_Initialize() and ADC_StartConversion(void)
     function should have been called before calling this function.
 
   @Returns
@@ -216,13 +216,13 @@ void ADC_StartConversion();
     uint16_t convertedValue;
 
     ADC_Initialize();
-    ADC_StartConversion(AN1_Channel);
+    ADC_StartConversion();
 
     while(!ADC_IsConversionDone());
     convertedValue = ADC_GetConversionResult();
     </code>
  */
-bool ADC_IsConversionDone();
+bool ADC_IsConversionDone(void);
 
 /**
   @Summary
@@ -248,7 +248,7 @@ bool ADC_IsConversionDone();
     uint16_t convertedValue;
 
     ADC_Initialize();
-    ADC_StartConversion(AN1_Channel);
+    ADC_StartConversion();
 
     while(ADC_IsConversionDone());
 
