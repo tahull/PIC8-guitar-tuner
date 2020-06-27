@@ -53,6 +53,7 @@
 #include <stdbool.h>
 #include <conio.h>
 #include "interrupt_manager.h"
+#include "i2c1_master.h"
 #include "fvr.h"
 #include "adc.h"
 #include "tmr0.h"

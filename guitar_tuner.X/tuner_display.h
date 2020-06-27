@@ -15,7 +15,7 @@
 #define TUNING_ACCURACY2 TUNING_ACCURACY*2
 #define TUNING_ACCURACY3 TUNING_ACCURACY*3
 
-// standard tuning
+// standard tuning 440.0 hz
 #define E2 824  //82.4 Hz
 #define A2 1100 //110.0 Hz
 #define D3 1468 //146.8 Hz
@@ -24,6 +24,7 @@
 #define E4 3296 //329.6 Hz
     
 void tuner_display(uint16_t f);
+void tuner_display_uart(uint16_t f);
 
 
 #endif	/* TUNING_H */

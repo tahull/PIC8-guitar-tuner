@@ -1,21 +1,21 @@
 /**
-  @Generated PIC10 / PIC12 / PIC16 / PIC18 MCUs Source File
+  I2C1 Generated Driver API Header File
 
-  @Company:
+  @Company
     Microchip Technology Inc.
 
-  @File Name:
-    mcc.c
+  @File Name
+    i2c1_master_example.h
 
-  @Summary:
-    This is the mcc.c file generated using PIC10 / PIC12 / PIC16 / PIC18 MCUs
+  @Summary
+    This is the generated header file for the I2C1 driver example using PIC10 / PIC12 / PIC16 / PIC18 MCUs
 
-  @Description:
-    This header file provides implementations for driver APIs for all modules selected in the GUI.
+  @Description
+    This header file provides APIs for driver for I2C1.
     Generation Information :
         Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.81.0
         Device            :  PIC16F1829
-        Driver Version    :  2.00
+        Driver Version    :  1.0.0
     The generated drivers are tested against the following:
         Compiler          :  XC8 2.10 and above or later
         MPLAB             :  MPLAB X 5.35
@@ -44,42 +44,19 @@
     SOFTWARE.
 */
 
-#include "mcc.h"
+#ifndef I2C1_MASTER_EXAMPLE_H
+#define I2C1_MASTER_EXAMPLE_H
 
+#include <stdint.h>
+#include <stdio.h>
+#include "../i2c1_master.h"
 
-void SYSTEM_Initialize(void)
-{
+uint8_t  I2C1_Read1ByteRegister(i2c1_address_t address, uint8_t reg);
+uint16_t I2C1_Read2ByteRegister(i2c1_address_t address, uint8_t reg);
+void I2C1_Write1ByteRegister(i2c1_address_t address, uint8_t reg, uint8_t data);
+void I2C1_Write2ByteRegister(i2c1_address_t address, uint8_t reg, uint16_t data);
+void I2C1_WriteNBytes(i2c1_address_t address, uint8_t *data, size_t len);
+void I2C1_ReadNBytes(i2c1_address_t address, uint8_t *data, size_t len);
+void I2C1_ReadDataBlock(i2c1_address_t address, uint8_t reg, uint8_t *data, size_t len);
 
-    I2C1_Initialize();
-    PIN_MANAGER_Initialize();
-    OSCILLATOR_Initialize();
-    WDT_Initialize();
-    FVR_Initialize();
-    ADC_Initialize();
-    TMR0_Initialize();
-    EUSART_Initialize();
-}
-
-void OSCILLATOR_Initialize(void)
-{
-    // SCS FOSC; SPLLEN disabled; IRCF 8MHz_HF; 
-    OSCCON = 0x70;
-    // TUN 0; 
-    OSCTUNE = 0x00;
-    // SBOREN disabled; 
-    BORCON = 0x00;
-    // Wait for PLL to stabilize
-    while(PLLR == 0)
-    {
-    }
-}
-
-void WDT_Initialize(void)
-{
-    // WDTPS 1:65536; SWDTEN OFF; 
-    WDTCON = 0x16;
-}
-
-/**
- End of File
-*/
+#endif /* I2C1_MASTER_EXAMPLE_H */

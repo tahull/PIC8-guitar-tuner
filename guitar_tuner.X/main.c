@@ -8,6 +8,7 @@
 #include "tuner_defs.h"
 #include "tuner_display.h"
 #include "amdf.h"
+#include "ssd1306_oled.h"
 
 
 //global vars
@@ -112,6 +113,15 @@ void main(void)
 #ifdef RAW_SIGNAL_DEBUG
     printf("adc offset: %d adc trigger: %d \n", ADCOFFSET, TRIGGER_LEVEL);
 #endif  
+    
+    
+    
+    ssd1306_init();
+    ssd1306_clr(0,0,128,8);
+    
+    ssd1306_gotoxy(0,0);
+    uint8_t test[6] = {0x40,0x7C,0x12,0x11,0x12,0x7C};
+    I2C1_WriteNBytes(0x3C,test,6);
     
     while (1)
     {
