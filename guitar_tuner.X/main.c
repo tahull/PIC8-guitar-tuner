@@ -119,9 +119,21 @@ void main(void)
     ssd1306_init();
     ssd1306_clr(0,0,128,8);
     
-    ssd1306_gotoxy(0,0);
-    uint8_t test[6] = {0x40,0x7C,0x12,0x11,0x12,0x7C};
-    I2C1_WriteNBytes(0x3C,test,6);
+//    ssd1306_gotoxy(0,0);
+//    ssd1306_putchar(&char5x7[60],10,2,5,true);
+    
+    ssd1306_draw_char(0,0,90, 2,true);
+    ssd1306_draw_char(12,0,95, 2,true);
+    
+    ssd1306_disp_f(824);
+    
+    ssd1306_disp_f(3216);
+    
+    ssd1306_disp_f(792);
+
+    ssd1306_draw_char(49,2,75, 6,true);
+    ssd1306_disp_tune_bar(0);
+    ssd1306_disp_tune_bar(-4);
     
     while (1)
     {
