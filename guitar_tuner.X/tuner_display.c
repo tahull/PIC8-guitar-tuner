@@ -1,17 +1,49 @@
 #include "tuner_display.h"
 
+static uint16_t notes[] = {E2, A2, D3, G3, B3, E4};
+static uint16_t trans[] = {680, 960, 1280, 1710, 2210, 2880, 3700};
+
 /* Given a frequency, compare with a tuning table, format and output.
  * output to UART or ssd1306 oled
  * TODO decide display medium and alternate tunings 
  */
 void tuner_display(uint16_t f){
+    uint8_t string_to_char[6] = {75,55,70,85,60,75};
+    //find the tuning range that the frequency 'f' falls into
+    for(uint8_t i = 0; i < 6; i++){
+        //if frequency is between lower_range and upper_range
+        if(f >= trans[i] && f < trans[i+1]){
+            ssd1306_draw_char(0,0,90, 2,true); //draw "f"
+            ssd1306_draw_char(12,0,95, 2,true); //draw "="
 
+            ssd1306_disp_f(f);
+            ssd1306_draw_char(49,2,string_to_char[i], 6,true);
+            //within "accurate" tuning range
+            if(f >= notes[i] - (TUNING_ACCURACY) && f <= notes[i] + (TUNING_ACCURACY)){
+                ssd1306_disp_tune_bar(0);
+            }
+            else{//too high or too low. divide the range up to 4 sections, 4 bars too high or 4 bars too low
+                int16_t range,x;
+                int8_t b;
+                if(f > notes[i])
+                    b = 1;
+                else
+                    b = -1;
+
+                range = notes[i]-trans[i];
+                x = (int16_t)(f - notes[i]);
+                int16_t m = range/4;
+                int16_t y = x/m+b;
+                //printf("f: %u diff: %d m: %d y: %d\n",f, x, m,y);
+                ssd1306_disp_tune_bar(y);
+            }
+            break;
+        }
+    }
 }
 
 void tuner_display_uart(uint16_t f){
     uint8_t note_name[][3] = {"E2","A2","D3","G3","B3","E4"};
-    uint16_t notes[] = {E2, A2, D3, G3, B3, E4};
-    uint16_t trans[] = {680, 960, 1280, 1710, 2210, 2880, 3700};
     //uint16_t trans[] = {E2-(A2-E2)/2, E2+(A2-E2)/2, A2+(D3-A2)/2, D3+(G3-D3)/2, G3+(B3-G3)/2, B3+(E4-B3)/2, E4+(E4-B3)/2};
     
     //find the tuning range that the frequency 'f' falls into

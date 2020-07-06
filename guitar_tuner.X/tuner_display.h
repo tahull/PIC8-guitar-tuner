@@ -10,6 +10,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include "tuner_defs.h"
+#include "ssd1306_oled.h"
 
 #define TUNING_ACCURACY 4 // 4 -> +/- 0.4 hz accuracy
 #define TUNING_ACCURACY2 TUNING_ACCURACY*2
