@@ -116,7 +116,6 @@ void main(void)
     
     
     ssd1306_init();
-    ssd1306_clr(0,0,128,8);
     
     while (1)
     {

@@ -62,6 +62,9 @@ void ssd1306_init(void){
     //set osc freq D5 80
     //enable charge pump regulator 8D, 14
     //display on AF
+
+    //clear display
+    ssd1306_clr(0,0,128,8);
 }
 
 void ssd1306_clr(uint8_t startx, uint8_t starty, uint8_t endx, uint8_t endy){    

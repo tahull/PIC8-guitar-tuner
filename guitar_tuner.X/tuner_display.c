@@ -8,7 +8,9 @@ static uint16_t trans[] = {680, 960, 1280, 1710, 2210, 2880, 3700};
  * TODO decide display medium and alternate tunings 
  */
 void tuner_display(uint16_t f){
-    uint8_t string_to_char[6] = {75,55,70,85,60,75};
+    uint8_t string_to_char[6] = {75,55,70,85,60,75}; //E, A, D, G, B, E
+    int16_t x,y;
+    int8_t b;
     //find the tuning range that the frequency 'f' falls into
     for(uint8_t i = 0; i < 6; i++){
         //if frequency is between lower_range and upper_range
@@ -18,23 +20,23 @@ void tuner_display(uint16_t f){
 
             ssd1306_disp_f(f);
             ssd1306_draw_char(49,2,string_to_char[i], 6,true);
+
+            x = (int16_t)(f - notes[i]);
             //within "accurate" tuning range
-            if(f >= notes[i] - (TUNING_ACCURACY) && f <= notes[i] + (TUNING_ACCURACY)){
+            if(abs(x) <= TUNING_ACCURACY){
                 ssd1306_disp_tune_bar(0);
             }
-            else{//too high or too low. divide the range up to 4 sections, 4 bars too high or 4 bars too low
-                int16_t range,x;
-                int8_t b;
+            else{//too high or too low
                 if(f > notes[i])
                     b = 1;
                 else
                     b = -1;
 
-                range = notes[i]-trans[i];
-                x = (int16_t)(f - notes[i]);
-                int16_t m = range/4;
-                int16_t y = x/m+b;
-                //printf("f: %u diff: %d m: %d y: %d\n",f, x, m,y);
+                if(abs(x) >= TUNING_RANGE)
+                    y = TUNING_INDICATORS*(b);
+                else
+                    y = (x/TUNING_POINTS)+b;
+                //printf("f: %u m: %d diff: %d y: %d\n",f, TUNING_POINTS, x, y);
                 ssd1306_disp_tune_bar(y);
             }
             break;

@@ -13,8 +13,11 @@
 #include "ssd1306_oled.h"
 
 #define TUNING_ACCURACY 4 // 4 -> +/- 0.4 hz accuracy
-#define TUNING_ACCURACY2 TUNING_ACCURACY*2
-#define TUNING_ACCURACY3 TUNING_ACCURACY*3
+#define TUNING_ACCURACY2 TUNING_ACCURACY*2 //>.4 < .8
+#define TUNING_ACCURACY3 TUNING_ACCURACY*3 // >.8 < 1.2
+#define TUNING_RANGE    60      //tuning accuracy range 60 -> 6hz
+#define TUNING_INDICATORS   4   //number of bars to draw on screen to indicate tunning accuracy
+#define TUNING_POINTS   (TUNING_RANGE/TUNING_INDICATORS) //split up the tune range by the number of indicators
 
 // standard tuning 440.0 hz
 #define E2 824  //82.4 Hz
