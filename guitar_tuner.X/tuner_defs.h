@@ -10,23 +10,23 @@
 #include <stdint.h>
 
 //guitar tuner config
-#define FS 4943 //sample frequency set by timmer interrupt rate
-#define SAMPLE_SIZE 128  //size of signal sample array
+#define FS          4943    //sample frequency set by timmer interrupt rate
+#define SAMPLE_SIZE 128     //size of signal sample array
 
-#define ADCBITS 7
-//voltage bias from amplifier circuit in milli volts
-#define VBIAS 1.8    //1.8v
-#define ADCVREF 4.096    //fvr positive reference voltage 4.096v
+#define ADCBITS     7
+//voltage bias from amplifier circuit in volts
+#define VBIAS       1.8     //1.8v
+//voltage level/trigger point to start collecting samples
+#define VTRIGGER    3.2     //set high enough so the algorythm isnt constantly processing noise
+#define ADCVREF     4.096   //fvr positive reference voltage 4.096v
 // adc offset. ex for 10 bit
 // 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
 #define ADCOFFSET (int16_t)(VBIAS/((double)ADCVREF/(1<<ADCBITS)))
-// adc threshold to check for, before collecting samples
-// set as +50% of the offset
-#define TRIGGER_LEVEL (ADCOFFSET + ADCOFFSET/2)//adc threshold to check for, before collecting samples
+#define TRIGGER_LEVEL (int16_t)(VTRIGGER/((double)ADCVREF/(1<<ADCBITS)))
 
-// frequency limits. expected range of 50 hz to 400 hz
-#define F_MIN 50
-#define F_MAX 400
+// frequency limits. expected range for a guitar: 50 hz to 400 hz
+#define F_MIN       50
+#define F_MAX       400
 #define T_MIN FS/F_MAX      //minimum period normalized to sample frequency
 #define T_MAX FS/F_MIN      //maximum period normalized to sample frequency  
 
