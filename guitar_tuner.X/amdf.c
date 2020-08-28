@@ -8,59 +8,39 @@
  * the parabolic curve between sampling points
  */
 uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs){
-    int16_t diff = 0, alpha = 0, beta = 0, gamma = 0, period_adjust = 0;
-    uint16_t f, period, thresh = 65000;
-    uint8_t state = 0;
+    int16_t alpha = 0, beta = 0, gamma = 0, temp_beta, temp_alpha = 32765, temp_gamma; 
+    int16_t diff = 0, period_adjust = 0;
+    uint16_t f, period;
+    //uint8_t state = 0;
     
-#ifdef AMDF_DEBUG
-    //start print of correlation points
-    printf("amdf = [");
-#endif
-
-    for(uint16_t k = 1; k < len; k++){
-        gamma = beta;
-        beta = alpha;
-        alpha = 0;
+    uint16_t min_val = 65535;
+    //test a window range
+    for(uint16_t k = 30; k < 70; k++){
+        temp_gamma = temp_beta;
+        temp_beta = temp_alpha;
+        temp_alpha = 0;
         for(uint16_t n = 0; n < (len-k); n++){
-            diff = (arr[n]-arr[n+k]); // sums get too large divide to avoid overflow
+            diff = (arr[n]-arr[n+k]); // difference of elements
             //printf("an[%i]=%i an+k[%i+%i]=%i diff=%i \n",n,arr[n],n,k,arr[n+k],diff);
-            if (diff < 0)
+            if (diff < 0)       //abs
                 diff = -diff;
-            alpha += diff; // sum up elements at k
+            temp_alpha += diff; // sum up elements at k
         }
-        //Find first peak
-        if(state == 0 && (alpha - beta) <= 0){
-            thresh = beta/3; // set new threshold, low enough to ignore harmonics
-            state = 1;
+        temp_alpha = temp_alpha/(len-k); // average
+        //find the lowest value in this sequence, set alpha, beta, gamma
+        if(temp_beta < min_val){
+            min_val = temp_beta;
+            period = k-1;
+            gamma = temp_gamma;
+            beta = temp_beta;
+            alpha = temp_alpha;        
         }
-        //Find the index of the first lowest point in valid range
-        else if(k > T_MIN && k < T_MAX){
-            if(state == 1 && (beta < thresh) && (beta - alpha) < 0){
-                period = k - 1;
-//do debug messages
-#ifdef AMDF_DEBUG
-            printf("%u]\n",alpha); // print final amdf array element
-#endif
-                break;
-            }
-        }
-        //couldn't find a period within valid range
-        else if (k > T_MAX){
-//do debug messages
-#ifdef AMDF_DEBUG
-            // print final amdf array element of failed attempt
-            printf("%u]\n Could not find a valid period within: %u to %u ",alpha,T_MIN,T_MAX); 
-#endif
-            break;
-        }
-#ifdef AMDF_DEBUG
-        printf("%u,",alpha); // print amdf array element
-#endif
     }
+        
     //parabolic peak interpolation. +/- amount to adjust current period
     period_adjust = interp(alpha, beta, gamma);//(((int32_t)alpha - gamma)<<FIXED_POINT_INTP_SHIFT)/((int16_t)(2*(2*beta - alpha - gamma)));
     // calc frequency relative to sampling frequency
-    f = (((uint32_t)fs*10)<<FIXED_POINT_INTP_SHIFT)/((period<<FIXED_POINT_INTP_SHIFT) + period_adjust);        
+    f = (((uint32_t)fs*10)<<FIXED_POINT_INTP_SHIFT)/((period<<FIXED_POINT_INTP_SHIFT) + period_adjust); 
 #ifdef INTP_DEBUG
     uint16_t f_raw = ((uint32_t)fs*10)/period;
 
