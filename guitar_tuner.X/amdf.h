@@ -41,7 +41,7 @@ uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs);
  * @Return
  *  uint16_t : return the amount to adjust
 */
-int16_t interp(int16_t alpha, int16_t beta, int16_t gamma);
+int16_t interp(uint16_t alpha, uint16_t beta, uint16_t gamma);
 
 
 

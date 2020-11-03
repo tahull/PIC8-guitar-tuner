@@ -101,18 +101,18 @@ static void ssd1306_clr_buf(uint8_t size){
         disp_buf[i] = 0;
 }
 
-void ssd1306_draw_char( int16_t x, int16_t y, uint8_t ch, uint8_t size,uint8_t ow) {
-    for(int8_t i = 0; i < 5 ; i++ ){
+void ssd1306_draw_char( uint8_t x, uint8_t y, uint8_t ch, uint8_t size,uint8_t ow) {
+    for(uint8_t i = 0; i < 5 ; i++ ){
         uint8_t line = 0;
         line = char5x7[ch+i];
-        for(int8_t j = 0; j < 8 ; j++, line >>= 1 ){
+        for(uint8_t j = 0; j < 8 ; j++, line >>= 1 ){
             uint8_t starty = j*size;
             uint8_t startx = i*size;            
             uint8_t pos = (starty>>3);
             //1 fill buffer with bits expanded to "size"
-            for(int8_t k = starty ; k < starty+size ; k++ ){ 
+            for(uint8_t k = starty ; k < starty+size ; k++ ){ 
                 if( line & 0x1 ){
-                    uint8_t pixmask = (1 << ((k)&0x07)); 
+                    uint8_t pixmask = (uint8_t)(1 << ((k)&0x07)); 
                     for(uint8_t l = 0; l < size; l++){
                         disp_buf[l] |= pixmask;                        
                     }

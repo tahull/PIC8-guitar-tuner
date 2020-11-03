@@ -25,7 +25,7 @@ void print_array(uint16_t len, samp_t *arr);
  */
 void TMR0_Interrupt(void){
     static uint16_t idx;
-    static adc_t adc_val;
+    adc_t adc_val;
     
     adc_val = ADC_read();
     
@@ -36,7 +36,7 @@ void TMR0_Interrupt(void){
         tuner_state = COLLECT;
     if (tuner_state == COLLECT){
         if(idx < SAMPLE_SIZE){
-            sample_buff[idx] = adc_val - ADCOFFSET;
+            sample_buff[idx] = (samp_t)(adc_val - ADCOFFSET);
             idx++;
         }
         else{

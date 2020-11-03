@@ -31,13 +31,13 @@ void tuner_display(uint16_t f){
                     b = 1;
                 else
                     b = -1;
-
+                
                 if(abs(x) >= TUNING_RANGE)
                     y = TUNING_INDICATORS*(b);
-                else
+                else//distance to target frequency is above minimum range. draw more bars
                     y = (x/TUNING_POINTS)+b;
                 //printf("f: %u m: %d diff: %d y: %d\n",f, TUNING_POINTS, x, y);
-                ssd1306_disp_tune_bar(y);
+                ssd1306_disp_tune_bar((int8_t)y);
             }
             break;
         }

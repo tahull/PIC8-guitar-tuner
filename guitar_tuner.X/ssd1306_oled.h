@@ -2,7 +2,7 @@
  * File:   ssd1306_oled.h
  * Author: tahull
  * Simple oled driver for a guitar tuner
- * 
+ * oled size is 128x64
  */
 
 #ifndef SSD1306_OLED_H
@@ -31,9 +31,10 @@ void ssd1306_putchar(uint8_t* buf, uint8_t x, uint8_t y, uint8_t size, uint8_t o
  * y - start y location
  * ch - index of the char buffer "char5x7[ch]"
  * size - expansion size. size 2 will make a 5x7 char into a 10x14
- * ow - on/off to clear write blank pixels
+ * ow - on/off to clear, write blank pixels
+ * TODO: error checking size limits
 */
-void ssd1306_draw_char( int16_t x, int16_t y, uint8_t ch, uint8_t size,uint8_t ow); 
+void ssd1306_draw_char( uint8_t x, uint8_t y, uint8_t ch, uint8_t size,uint8_t ow); 
 
 /* write a number to the oled screen on the top bar. there's no negative frequency
  */
