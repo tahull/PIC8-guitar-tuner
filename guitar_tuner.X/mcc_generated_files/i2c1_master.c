@@ -13,12 +13,12 @@
   @Description
     This header file provides implementations for driver APIs for I2C1.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.81.0
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.81.7
         Device            :  PIC16F1829
-        Driver Version    :  1.0.0
+        Driver Version    :  1.0.2
     The generated drivers are tested against the following:
-        Compiler          :  XC8 2.10 and above or later
-        MPLAB             :  MPLAB X 5.35
+        Compiler          :  XC8 2.31 and above or later
+        MPLAB             :  MPLAB X 5.45
 */
 
 /*
@@ -142,8 +142,8 @@ static i2c1_fsm_states_t I2C1_DO_RESET(void);
 static i2c1_fsm_states_t I2C1_DO_ADDRESS_NACK(void);
 
 
-typedef i2c1_fsm_states_t (*fsmHandlerFunction)(void);
-const fsmHandlerFunction fsmStateTable[] = {
+typedef i2c1_fsm_states_t (*i2c1FsmHandler)(void);
+const i2c1FsmHandler i2c1_fsmStateTable[] = {
     I2C1_DO_IDLE,
     I2C1_DO_SEND_ADR_READ,
     I2C1_DO_SEND_ADR_WRITE,
@@ -326,7 +326,7 @@ static inline void I2C1_MasterFsm(void)
     {
         I2C1_Status.state = I2C1_ADDRESS_NACK;
     }
-    I2C1_Status.state = fsmStateTable[I2C1_Status.state]();
+    I2C1_Status.state = i2c1_fsmStateTable[I2C1_Status.state]();
 }
 
 
@@ -340,14 +340,14 @@ static i2c1_fsm_states_t I2C1_DO_IDLE(void)
 static i2c1_fsm_states_t I2C1_DO_SEND_ADR_READ(void)
 {
     I2C1_Status.addressNackCheck = 1;
-    I2C1_MasterSendTxData(I2C1_Status.address << 1 | 1);
+    I2C1_MasterSendTxData((uint8_t) (I2C1_Status.address << 1 | 1));
     return I2C1_RCEN;
 }
 
 static i2c1_fsm_states_t I2C1_DO_SEND_ADR_WRITE(void)
 {
     I2C1_Status.addressNackCheck = 1;
-    I2C1_MasterSendTxData(I2C1_Status.address << 1);
+    I2C1_MasterSendTxData((uint8_t) (I2C1_Status.address << 1));
     return I2C1_TX;
 }
 
