@@ -13,36 +13,74 @@
 
 //global vars
 samp_t sample_buff[SAMPLE_SIZE] = { 0 }; //samples from adc
-enum tuner {SCAN,COLLECT,PROCESS,PAUSE} tuner_state; //sampling states
+enum tuner {SCAN,COLLECT,PROCESS,RESET,PAUSE} tuner_state; //sampling states
 
 //function prototypes
-adc_t ADC_read(void);
+adc_result_t ADC_read(void);
 #ifdef RAW_SIGNAL_DEBUG
 void print_array(uint16_t len, samp_t *arr);
 #endif
 
 /* Timer interrupt for adc sample frequency     
  */
+uint16_t idx, peak_idx, accum_t;
+uint8_t peak_cnt;
 void TMR0_Interrupt(void){
-    static uint16_t idx;
-    adc_t adc_val;
+    static samp_t prev_val;
+    static uint8_t state;
+    samp_t adc_val;
     
-    adc_val = ADC_read();
+    adc_val = (samp_t)ADC_read();
     
-    // found a loud signal, is if from a guitar?, does it matter?
-    // TODO: test if it's worth additional testing, like checking for a second
-    // peak and checking if the period falls in an expected range
+    // Wait for an initial signal amplitude before collecting samples
     if (tuner_state == SCAN && adc_val > TRIGGER_LEVEL)
         tuner_state = COLLECT;
+    // Test checking for a second peak and checking if the
+    // period falls in an expected range
     if (tuner_state == COLLECT){
         if(idx < SAMPLE_SIZE){
-            sample_buff[idx] = (samp_t)(adc_val - ADCOFFSET);
+            adc_val = (samp_t)(adc_val - ADCOFFSET);//remove calculated dc offset
+            //test eliminate invalid signals
+            //find a peak, find next peak within t_min/max
+
+            //search for peak
+            if(state == 0){
+                //find peak
+                if(prev_val > (TRIGGER_LEVEL - ADCOFFSET) && prev_val-adc_val > 0){
+                    if(peak_idx != 0){// not first peak
+                        accum_t += idx - peak_idx;   //accumulate period for printf verbose
+                        peak_cnt++;                 //increment peak counter
+                    }
+                    //save peak location
+                    peak_idx = idx;
+                    state = 1;
+                }
+            }
+            //wait for zero crossing
+            else if (state == 1 && adc_val < 0)
+                state = 0;
+            //if there isn't another peak within max period range, drop this signal
+            if(idx - peak_idx > T_MAX)
+                tuner_state = PAUSE;
+
+            prev_val =  adc_val;
+
+            //save new adc sample
+            sample_buff[idx] = adc_val;
             idx++;
         }
-        else{
-            idx = 0;
+        else{//process valid signal
             tuner_state = PROCESS;
         }
+    }
+    if (tuner_state == RESET){
+        idx = 0;
+        peak_idx = 0;
+        prev_val = 0;
+        accum_t = 0;
+        peak_cnt = 0;
+        state = 0;
+        tuner_state = SCAN;
     }
 }
 
@@ -56,14 +94,14 @@ void TMR0_Interrupt(void){
  * 
  * Assumes ADC result is left justified
  */
-adc_t ADC_read(void){
+adc_result_t ADC_read(void){
     // Start the conversion
     ADCON0bits.GO_nDONE = 1;
     // Wait for the conversion to finish. ~30uS in this wait loop
     while (ADCON0bits.GO_nDONE);
     // Conversion finished, return the result
 #if ADCBITS > 8
-    return (((uint16_t)(ADRESH << 8) + ADRESL)>>(16-ADCBITS));
+    return (((adc_result_t)(ADRESH << 8) + ADRESL)>>(16-ADCBITS));;
 #else
     return ADRESH >> (8-ADCBITS); 
 #endif
@@ -73,7 +111,7 @@ adc_t ADC_read(void){
  */
 #ifdef RAW_SIGNAL_DEBUG
 void print_array(uint16_t len, samp_t *arr){
-    printf("orig_signal = [");
+    printf("raw_signal = [");
     for(uint16_t i = 0; i < len; i++ )
         if(i == len-1) // last item. no comma
             printf("%i",arr[i]);
@@ -119,22 +157,34 @@ void main(void)
     
     while (1)
     {
-        if(tuner_state == PROCESS){
-            tuner_state = PAUSE;
+        // process signal, pause interrupt, clear sample buffer, display frequency
+        // then restart sample collecting
+        if(tuner_state == PROCESS){            
             INTERRUPT_GlobalInterruptDisable();
-            
-#ifdef RAW_SIGNAL_DEBUG
-            //print the original array
-            print_array(SAMPLE_SIZE, sample_buff);
-#endif
-            
+            tuner_state = PAUSE;
+                       
             uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS);
             //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
-            tuner_display(f);
-            
-            tuner_state = SCAN;
+            tuner_display(f);            
+
             INTERRUPT_GlobalInterruptEnable();
         }
+        //sample collection was paused or aborted, clear sample buffer and restart
+        if(tuner_state == PAUSE){
+            INTERRUPT_GlobalInterruptDisable();
+            
+ #ifdef RAW_SIGNAL_DEBUG
+            printf("idx %u last peak %u t sum %u t cnt %u avg t %u\n",idx,peak_idx, accum_t,peak_cnt,accum_t/peak_cnt);
+            //print the raw sample array
+            print_array(SAMPLE_SIZE, sample_buff);
+#endif                        
+            for(int i = 0; i < SAMPLE_SIZE;i++)
+                sample_buff[i] = 0;
+            
+            tuner_state = RESET;
+            INTERRUPT_GlobalInterruptEnable();
+        }
+        
     }
 }
 /**
