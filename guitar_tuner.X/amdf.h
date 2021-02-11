@@ -11,7 +11,11 @@
 #include <stdio.h>
 #include "tuner_defs.h"
 
-#define FIXED_POINT_INTP_SHIFT 8 
+#define FIXED_POINT_INTP_SHIFT 5
+
+#if T_MAX*(1<<FIXED_POINT_INTP_SHIFT) > INT16_MAX
+#warning "fixed point shift or max period could be too large"
+#endif
 
 /* @Summary
  *  apply AMDF autocorrelation to a sample array
@@ -41,7 +45,7 @@ uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs);
  * @Return
  *  uint16_t : return the amount to adjust
 */
-int16_t interp(uint16_t alpha, uint16_t beta, uint16_t gamma);
+int16_t interp(int16_t alpha, int16_t beta, int16_t gamma);
 
 
 
