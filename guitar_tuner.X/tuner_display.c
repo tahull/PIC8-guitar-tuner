@@ -44,6 +44,20 @@ void tuner_display(uint16_t f){
     }
 }
 
+void tuner_display_string(uint8_t string_id){
+    uint8_t string_to_char[6] = {75,55,70,85,60,75}; //E, A, D, G, B, E
+    ssd1306_clr(0,0,128,8);
+    if(string_id < 6)
+        ssd1306_draw_char(49,2,string_to_char[string_id], 6,true);
+    else{
+        ssd1306_draw_char(118,0,55, 2,true); //draw "A"
+        //ssd1306_draw_char(0,0,105, 2,true); //draw "u"
+        //ssd1306_draw_char(0,0,110, 2,true); //draw "t"
+        //ssd1306_draw_char(0,0,115, 2,true); //draw "o"
+    }
+        
+}
+
 void tuner_display_uart(uint16_t f){
     uint8_t note_name[][3] = {"E2","A2","D3","G3","B3","E4"};
     //uint16_t trans[] = {E2-(A2-E2)/2, E2+(A2-E2)/2, A2+(D3-A2)/2, D3+(G3-D3)/2, G3+(B3-G3)/2, B3+(E4-B3)/2, E4+(E4-B3)/2};

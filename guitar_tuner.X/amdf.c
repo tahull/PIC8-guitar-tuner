@@ -7,14 +7,14 @@
  * interpolation is used to approximate the actual peak/trough of 
  * the parabolic curve between sampling points
  */
-uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs){
+uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs, uint8_t t_min, uint16_t t_max){
     uint32_t temp_alpha = INT16_MAX;
     int16_t diff = 0, period_adjust = 0;
     uint16_t alpha = 0, beta = 0, gamma = 0, temp_beta;
     uint16_t f, period, len_k, min_val = UINT16_MAX;   
 
     //test a window range
-    for(uint16_t k = T_MIN; k < T_MAX; k++){
+    for(uint16_t k = t_min; k < t_max; k++){
         //temp_gamma = temp_beta;
         temp_beta = (uint16_t)temp_alpha;
         temp_alpha = 0;

@@ -133,7 +133,7 @@ void ssd1306_draw_char( uint8_t x, uint8_t y, uint8_t ch, uint8_t size,uint8_t o
 void ssd1306_disp_f(uint16_t f){
     uint8_t pos,val, deci = false;
     
-    ssd1306_clr(24,0,128,2);
+    ssd1306_clr(24,0,100,2);
     
     if(f > 999)
         pos = 6*TOP_CHAR_WIDTH;

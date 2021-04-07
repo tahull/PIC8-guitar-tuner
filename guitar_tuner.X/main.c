@@ -13,7 +13,7 @@
 
 //global vars
 samp_t sample_buff[SAMPLE_SIZE] = { 0 }; //samples from adc
-enum tuner {SCAN,COLLECT,PROCESS,RESET,PAUSE} tuner_state; //sampling states
+enum tuner {SCAN,COLLECT,PROCESS,UPDATE,RESET,PAUSE} tuner_state; //sampling states
 
 //function prototypes
 adc_result_t ADC_read(void);
@@ -25,10 +25,24 @@ void print_array(uint16_t len, samp_t *arr);
  */
 uint16_t idx, peak_idx, accum_t;
 uint8_t peak_cnt;
+uint8_t btn_sel = 6;
 void TMR0_Interrupt(void){
     static samp_t prev_val;
     static uint8_t state;
     samp_t adc_val;
+    
+    //check button every x ticks. if button is pressed, change string select
+    static uint16_t cnt2 = 0;    
+    if (cnt2 >= 1000){
+        cnt2 = 0;
+        if(IO_RC7_PORT == 0){
+            btn_sel++;
+            if(btn_sel >= 7)
+                btn_sel = 0;                
+            tuner_state = UPDATE;
+        }           
+    } 
+    cnt2++;
     
     adc_val = (samp_t)ADC_read();
     
@@ -154,22 +168,64 @@ void main(void)
     
     
     ssd1306_init();
+    tuner_state = UPDATE;
     
+    static uint8_t t_min = T_MIN, t_max = T_MAX;    
     while (1)
     {
+        
+        if(tuner_state == UPDATE){
+            INTERRUPT_GlobalInterruptDisable();
+            tuner_state = PAUSE;     
+            
+            switch(btn_sel){
+                case 0:
+                    t_min = FS/96; //96 -- 81
+                    t_max = T_MAX; // 65 -- 120
+                    break;
+                case 1:
+                    t_min = FS/128;
+                    t_max = FS/96;
+                    break;
+                case 2:
+                    t_min = FS/171;
+                    t_max = FS/128;
+                    break;
+                case 3:
+                    t_min = FS/221;
+                    t_max = FS/171;
+                    break;
+                case 4:
+                    t_min = FS/280;
+                    t_max = FS/221;
+                    break;
+                case 5:
+                    t_min = T_MIN;
+                    t_max = FS/280;
+                    break;
+                case 6:
+                    t_min = T_MIN;
+                    t_max = T_MAX;
+                    break;
+            }
+            
+            tuner_display_string(btn_sel);
+            
+            INTERRUPT_GlobalInterruptEnable();
+        }
         // process signal, pause interrupt, clear sample buffer, display frequency
         // then restart sample collecting
         if(tuner_state == PROCESS){            
             INTERRUPT_GlobalInterruptDisable();
             tuner_state = PAUSE;
-                       
-            uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS);
+        
+            uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS,t_min,t_max);
             //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             tuner_display(f);            
 
             INTERRUPT_GlobalInterruptEnable();
         }
-        //sample collection was paused or aborted, clear sample buffer and restart
+        //sample collection was completed or aborted, clear sample buffer
         if(tuner_state == PAUSE){
             INTERRUPT_GlobalInterruptDisable();
             
