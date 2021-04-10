@@ -28,7 +28,7 @@
 #define E4 3296 //329.6 Hz
     
 void tuner_display(uint16_t f);
-void tuner_display_string(uint8_t string_id);
+void tuner_display_mode(uint8_t string_id);
 void tuner_display_uart(uint16_t f);
 
 

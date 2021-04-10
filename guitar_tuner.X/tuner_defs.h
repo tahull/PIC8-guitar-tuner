@@ -13,7 +13,7 @@
 #define FS          7804    //sample frequency set by timmer interrupt rate
 #define SAMPLE_SIZE 256     //size of signal sample array
 
-#define ADCBITS     10
+#define ADCBITS     7
 //voltage bias from amplifier circuit in volts
 #define VBIAS       1.8     //1.8v
 //voltage level/trigger point to start collecting samples
@@ -25,6 +25,10 @@
 // 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
 #define ADCOFFSET (int16_t)(VBIAS/((double)ADCVREF/(1<<ADCBITS)))
 #define TRIGGER_LEVEL (int16_t)(VTRIGGER/((double)ADCVREF/(1<<ADCBITS)))
+
+// Time between checking mode-button
+#define BTN_DELAY_MS    150 // in ms
+#define BTN_DELAY       (uint16_t)(((uint32_t)BTN_DELAY_MS*FS)/1000)
 
 // frequency limits. expected range for a guitar: 50 hz to 400 hz
 #define F_MIN       65
@@ -40,7 +44,7 @@ typedef int8_t samp_t;
 #endif
 
 //debug. uncomment to print debug info
-#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
+//#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
 //#define AMDF_DEBUG          // Processed amdf vals
 //#define INTP_DEBUG          // Print interpolation debug info
 //#define TUNE_DISPLAY_DEBUG  // Tuner display stuff
