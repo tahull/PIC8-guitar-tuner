@@ -67,6 +67,7 @@ void tuner_display_mode(uint8_t string_id){
 }
 
 // UART output for testing
+#ifdef TUNE_DISPLAY
 void tuner_display_uart(uint16_t f){
     uint8_t note_name[][3] = {"E2","A2","D3","G3","B3","E4"};
     //uint16_t trans[] = {E2-(A2-E2)/2, E2+(A2-E2)/2, A2+(D3-A2)/2, D3+(G3-D3)/2, G3+(B3-G3)/2, B3+(E4-B3)/2, E4+(E4-B3)/2};
@@ -75,7 +76,7 @@ void tuner_display_uart(uint16_t f){
     for(uint8_t i = 0; i < 6; i++){
         //if frequency is between lower_range and upper_range
         if(f >= trans[i] && f < trans[i+1]){
-#ifdef TUNE_DISPLAY_DEBUG
+#ifdef TUNE_DISPLAY_VERBOSE
             printf("found: %u.%u target: %u.%u between: %u to %u\n", \
                     (uint16_t)(f/10),(uint16_t)(f%10), \
                     (uint16_t)(notes[i]/10),(uint16_t)(notes[i]%10),\
@@ -86,20 +87,20 @@ void tuner_display_uart(uint16_t f){
                 printf("---(%s)---\n",note_name[i]);
             }
             //pitch too high
-            else if(f >= notes[i] + (TUNING_ACCURACY3+i)){
+            else if(f >= notes[i] + (TUNING_ACCURACY*3+i)){
                 printf("---(%s)<<<\n",note_name[i]);
             }
-            else if(f >= notes[i] + (TUNING_ACCURACY2+i)){
+            else if(f >= notes[i] + (TUNING_ACCURACY*2+i)){
                 printf("---(%s)<<-\n",note_name[i]);
             }
             else if(f >= notes[i] + (TUNING_ACCURACY+i)){
                 printf("---(%s)<--\n",note_name[i]);
             }
             //pitch too low
-            else if(f <= notes[i] - (TUNING_ACCURACY3+i)){
+            else if(f <= notes[i] - (TUNING_ACCURACY*3+i)){
                 printf(">>>(%s)---\n",note_name[i]);
             }
-            else if(f <= notes[i] - (TUNING_ACCURACY2+i)){
+            else if(f <= notes[i] - (TUNING_ACCURACY*2+i)){
                 printf("->>(%s)---\n",note_name[i]);
             }
             else if(f <= notes[i] - (TUNING_ACCURACY+i)){
@@ -109,4 +110,5 @@ void tuner_display_uart(uint16_t f){
         } 
     }
 }
+#endif
 

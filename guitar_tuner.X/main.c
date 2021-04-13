@@ -20,7 +20,7 @@ uint8_t btn_sel = 6;
 
 //function prototypes
 adc_result_t ADC_read(void);
-#ifdef RAW_SIGNAL_DEBUG
+#ifdef RAW_SIGNAL_VERBOSE
 void print_array(uint16_t len, samp_t *arr);
 #endif
 
@@ -82,7 +82,7 @@ adc_result_t ADC_read(void){
     while (ADCON0bits.GO_nDONE);
     // Conversion finished, return the result
 #if ADCBITS > 8
-    return (((adc_result_t)(ADRESH << 8) + ADRESL)>>(16-ADCBITS));;
+    return (((adc_result_t)(ADRESH << 8) + ADRESL)>>(16-ADCBITS));
 #else
     return ADRESH >> (8-ADCBITS); 
 #endif
@@ -90,7 +90,7 @@ adc_result_t ADC_read(void){
 
 /* Print the sample array
  */
-#ifdef RAW_SIGNAL_DEBUG
+#ifdef RAW_SIGNAL_VERBOSE
 void print_array(uint16_t len, samp_t *arr){
     printf("raw_signal = [");
     for(uint16_t i = 0; i < len; i++ )
@@ -130,10 +130,9 @@ void main(void)
     TMR0_SetInterruptHandler(TMR0_Interrupt);
     ADC_SelectChannel(channel_AN11);
     
-#ifdef RAW_SIGNAL_DEBUG
+#ifdef RAW_SIGNAL_VERBOSE
     printf("adc offset: %d adc trigger: %d \n", ADCOFFSET, TRIGGER_LEVEL);
-#endif  
-    
+#endif
     
     ssd1306_init();
     tuner_state = SELECT_MODE;
@@ -181,7 +180,10 @@ void main(void)
         if(tuner_state == PROCESS){            
             INTERRUPT_GlobalInterruptDisable();
             tuner_state = RESET;
-        
+#ifdef RAW_SIGNAL_VERBOSE
+            //print the raw signal array
+            print_array(SAMPLE_SIZE, sample_buff);
+#endif
             uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS,t_min,t_max);
             //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             tuner_display(f);            

@@ -30,7 +30,7 @@
 #define BTN_DELAY_MS    150 // in ms
 #define BTN_DELAY       (uint16_t)(((uint32_t)BTN_DELAY_MS*FS)/1000)
 
-// frequency limits. expected range for a guitar: 50 hz to 400 hz
+// frequency limits. expected range for a guitar: 65 hz to 365 hz
 #define F_MIN       65
 #define F_MAX       365
 #define T_MIN FS/F_MAX      //minimum period normalized to sample frequency
@@ -44,10 +44,11 @@ typedef int8_t samp_t;
 #endif
 
 //debug. uncomment to print debug info
-//#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
-//#define AMDF_DEBUG          // Processed amdf vals
-//#define INTP_DEBUG          // Print interpolation debug info
-//#define TUNE_DISPLAY_DEBUG  // Tuner display stuff
+//#define RAW_SIGNAL_VERBOSE    // Raw ADC sample buffer
+//#define AMDF_VERBOSE          // Processed amdf vals
+//#define INTP_VERBOSE          // Print interpolation debug info
+//#define TUNE_DISPLAY            // Print tuner info to uart
+//#define TUNE_DISPLAY_VERBOSE  // Tuner display frequency and range
 
 
 #endif	/* GUITAR_TUNER_H */
