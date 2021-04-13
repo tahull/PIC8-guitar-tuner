@@ -26,8 +26,6 @@ static const uint8_t char5x7[] = {
 };
 
 static uint8_t disp_buf[6] ={0};
-//mapping for 0-9 chars
-static const uint8_t num_to_char[10] = {0,5,10,15,20,25,30,35,40,45};
 
 //private functions for ssd1306
 static void ssd1306_clr_buf(uint8_t size);
@@ -70,9 +68,9 @@ void ssd1306_init(void){
 void ssd1306_clr(uint8_t startx, uint8_t starty, uint8_t endx, uint8_t endy){    
     //uint8_t clrscreen[] = {0x40,0x00,0x00,0x00,0x00,0x00};
     uint8_t clr[] = {0x40,0x00};    
-    for(uint8_t i = starty;i<endy;i++){
+    for(uint8_t i = starty;i<=endy;i++){
         ssd1306_gotoxy(startx,i);
-        for(uint8_t j = startx; j < endx;j++){            
+        for(uint8_t j = startx; j <= endx;j++){
             I2C1_WriteNBytes(0x3C,clr,sizeof(clr));
         }
     }
@@ -126,59 +124,5 @@ void ssd1306_draw_char( uint8_t x, uint8_t y, uint8_t ch, uint8_t size,uint8_t o
                 }
             }
         }        
-    }
-}
-
-//num 24 - 4*12 or 5*12
-void ssd1306_disp_f(uint16_t f){
-    uint8_t pos,val, deci = false;
-    
-    ssd1306_clr(24,0,100,2);
-    
-    if(f > 999)
-        pos = 6*TOP_CHAR_WIDTH;
-    else
-        pos = 5*TOP_CHAR_WIDTH;
-    
-    while(f){
-        val = f%10;
-        f /=10;                       
-        ssd1306_draw_char(pos,0,num_to_char[val], 2,true);
-        pos -= TOP_CHAR_WIDTH;
-        if(!deci){
-            deci = true;            
-            ssd1306_draw_char(pos,0,100, 2,true);
-            pos -= TOP_CHAR_WIDTH;
-        }
-    }    
-}
-
-void ssd1306_disp_tune_bar(int8_t val){
-    uint8_t pos;
-    
-    ssd1306_clr(0,2,48,8);
-    ssd1306_clr(80,2,128,8);
-    
-    if (val == 0){
-        ssd1306_draw_char(39,4,50, 3,false);
-        ssd1306_draw_char(83,4,50, 3,false);        
-    }
-    else{
-        if (val < 0)
-            pos = 37;
-        else
-            pos = 83;
-
-        while(val){    
-            ssd1306_draw_char(pos,3,50, 4,false);
-            if(val < 0){
-                pos -= MAIN_CHAR_WIDTH;
-                val++;
-            }
-            else{
-                pos += MAIN_CHAR_WIDTH;
-                val--;
-            }
-        }   
     }
 }
