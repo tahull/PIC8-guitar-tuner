@@ -24,6 +24,7 @@
       <itemPath>tuner_defs.h</itemPath>
       <itemPath>tuner_display.h</itemPath>
       <itemPath>ssd1306_oled.h</itemPath>
+      <itemPath>iir.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -52,6 +53,7 @@
       <itemPath>amdf.c</itemPath>
       <itemPath>tuner_display.c</itemPath>
       <itemPath>ssd1306_oled.c</itemPath>
+      <itemPath>iir.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -68,7 +70,7 @@
         <targetDevice>PIC16F1829</targetDevice>
         <targetHeader></targetHeader>
         <targetPluginBoard></targetPluginBoard>
-        <platformTool>noID</platformTool>
+        <platformTool>PICkit3PlatformTool</platformTool>
         <languageToolchain>XC8</languageToolchain>
         <languageToolchainVersion>2.31</languageToolchainVersion>
         <platform>2</platform>
@@ -191,6 +193,7 @@
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
         <property key="debugoptions.useswbreakpoints" value="false"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="hwtoolclock.frcindebug" value="false"/>
         <property key="memories.aux" value="false"/>
         <property key="memories.bootflash" value="true"/>
@@ -1296,7 +1299,7 @@
         <property key="user-pack-device-support" value=""/>
         <property key="wpo-lto" value="false"/>
       </XC8-config-global>
-      <item path="amdf.c" ex="false" overriding="false">
+      <item path="amdf.c" ex="true" overriding="false">
         <HI-TECH-COMP>
         </HI-TECH-COMP>
         <HI-TECH-LINK>
@@ -1306,7 +1309,7 @@
         <XC8-config-global>
         </XC8-config-global>
       </item>
-      <item path="amdf.h" ex="false" overriding="false">
+      <item path="amdf.h" ex="true" overriding="false">
         <HI-TECH-COMP>
         </HI-TECH-COMP>
         <HI-TECH-LINK>
@@ -1315,6 +1318,14 @@
         </XC8-CO>
         <XC8-config-global>
         </XC8-config-global>
+      </item>
+      <item path="mcc_generated_files/examples/i2c1_master_example.c"
+            ex="true"
+            overriding="false">
+      </item>
+      <item path="mcc_generated_files/examples/i2c1_master_example.h"
+            ex="true"
+            overriding="false">
       </item>
     </conf>
   </confs>
