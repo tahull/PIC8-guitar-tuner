@@ -7,11 +7,11 @@
 #include "mcc_generated_files/mcc.h"
 #include "tuner_defs.h"
 #include "tuner_display.h"
-#include "amdf.h"
 
 
 //global vars
 #if (TUNER_MODE == AMDF || defined RAW_SIGNAL_DEBUG)
+#include "amdf.h"
 samp_t sample_buff[SAMPLE_SIZE] = { 0 }; //samples from adc
 #endif
 #if TUNER_MODE == IIR 
@@ -36,8 +36,8 @@ static inline int16_t iir_df1(int16_t x0){
     x2 = x1;
     x1 = x0;
     y2 = y1;
-    y1 = yn;
-    return yn;
+    y1 = (int16_t)yn;
+    return (int16_t)yn;
 }
 
 static inline uint16_t zc(int16_t yn){
@@ -63,7 +63,7 @@ static inline uint16_t zc(int16_t yn){
     //
     else{
         //shift up for better accuracy
-        avg = ((uint32_t)accum<<5)/avg_cnt;
+        avg = (uint16_t)(((uint32_t)accum<<5)/avg_cnt);
 #ifdef ZC_DEBUG
         printf("accum: %u crossings: %u avg: %u \n", accum, avg_cnt, avg);
 #endif        
@@ -89,7 +89,7 @@ uint16_t iir_process(int16_t raw_val){
     
     //move decimal point to 1/10 place
     if(avg != 0){
-        f = (((uint32_t)FS*10)<<5)/avg;
+        f = (uint16_t)((((uint32_t)FS*10)<<5)/avg);
     }
     return f;
 }
@@ -121,7 +121,7 @@ void TMR0_Interrupt(void){
         }
 #else
         //process every sample
-        sample = adc_val - ADCOFFSET;
+        sample = (samp_t)(adc_val - ADCOFFSET);
         tuner_state = PROCESS;        
 #endif
         
@@ -219,8 +219,8 @@ void main(void)
                 //print the original array
                 printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
                 //print_array(SAMPLE_SIZE, sample_buff);
-#endif          
                 printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
+#endif
                 tuner_display(f);
                 tuner_state = SCAN;
                 INTERRUPT_GlobalInterruptEnable();
