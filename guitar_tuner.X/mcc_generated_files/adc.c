@@ -13,12 +13,12 @@
   @Description
     This source file provides implementations for driver APIs for ADC.
     Generation Information :
-        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.81.3
+        Product Revision  :  PIC10 / PIC12 / PIC16 / PIC18 MCUs - 1.81.7
         Device            :  PIC16F1829
-        Driver Version    :  2.01
+        Driver Version    :  2.02
     The generated drivers are tested against the following:
-        Compiler          :  XC8 2.20 and above
-        MPLAB             :  MPLAB X 5.40
+        Compiler          :  XC8 2.31 and above
+        MPLAB             :  MPLAB X 5.45
 */
 
 /*
@@ -68,9 +68,6 @@ void ADC_Initialize(void)
 {
     // set the ADC to the options selected in the User Interface
     
-    // GO_nDONE stop; ADON enabled; CHS AN0; 
-    ADCON0 = 0x01;
-    
     // ADFM left; ADNREF VSS; ADPREF FVR; ADCS FOSC/32; 
     ADCON1 = 0x23;
     
@@ -79,6 +76,9 @@ void ADC_Initialize(void)
     
     // ADRESH 0; 
     ADRESH = 0x00;
+    
+    // GO_nDONE stop; ADON enabled; CHS AN0; 
+    ADCON0 = 0x01;
     
 }
 
