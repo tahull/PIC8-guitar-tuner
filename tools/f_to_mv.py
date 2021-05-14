@@ -4,10 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # sample frequency
-fs = 3906
+fs = 3874
 # set frequency
 #f = 82.4 #e2
-f = 329.6 #e4
+f = 110.0 #a2
+#f = 329.6 #e4
 # set fundamental frequency amplitude in mili volts
 A = 300
 # set some sample size
