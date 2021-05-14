@@ -34,7 +34,7 @@ int16_t iir_df1(int16_t x0){
     static int16_t x1,x2,y1,y2;
     int32_t yn;
     
-    yn = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
+    yn = (int32_t)b0*x0 + (int32_t)b1*x1 + (int32_t)b2*x2 - (int32_t)a1*y1 - (int32_t)a2*y2;
     yn >>= 8;
     x2 = x1;
     x1 = x0;
