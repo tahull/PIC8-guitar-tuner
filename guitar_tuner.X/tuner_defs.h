@@ -10,21 +10,26 @@
 #include <stdint.h>
 
 //guitar tuner config
-//#define FS 5000 //sample frequency set by timmer interrupt rate
-#define FS 3906 //sample frequency set by timmer interrupt rate
-#define SAMPLE_SIZE 128  //size of signal sample array
+#define FS          3874    //sample frequency set by timmer interrupt rate
+#define SAMPLE_SIZE 256     //size of signal sample array
 
-#define ADCBITS 10
-//voltage bias from amplifier circuit in milli volts
-#define VBIAS 1.8    //1.8v
-//#define ADCVREF 4.096 //fvr positive reference voltage 4.096v. fvr bug in sim? set to 5v for simulation
-#define ADCVREF 5
+#define ADCBITS     10
+//voltage bias from amplifier circuit in volts
+#define VBIAS       1.8     //1.8v
+//voltage level/trigger point to start collecting samples
+//set high enough so the algorithm isn't constantly processing noise
+#define VTRIGGER    2.5 
+//fvr positive reference voltage 4.096v
+//#define ADCVREF     4.096
+#define ADCVREF     5.0
 // adc offset. ex for 10 bit
 // 4.096v/(2^10) = 4mv per bit. 1.8v(bias from voltage divider on op amp)/.004v = 450
 #define ADCOFFSET (int16_t)(VBIAS/((double)ADCVREF/(1<<ADCBITS)))
-// adc threshold to check for, before collecting samples
-// set as +50% of the offset
-#define TRIGGER_LEVEL (ADCOFFSET + ADCOFFSET/2)//adc threshold to check for, before collecting samples
+#define TRIGGER_LEVEL (int16_t)(VTRIGGER/((double)ADCVREF/(1<<ADCBITS)))
+
+// Time between checking mode-button
+#define BTN_DELAY_MS    150 // in ms
+#define BTN_DELAY       (uint16_t)(((uint32_t)BTN_DELAY_MS*FS)/1000)
 
 // frequency limits. expected range of 50 hz to 400 hz
 #define F_MIN 50
@@ -33,10 +38,10 @@
 #define T_MAX FS/F_MIN      //maximum period normalized to sample frequency 
 
 //DSP tyes, autocorrelation or IIR low pass filter
-#define AMDF    0
-#define IIR     1
+//#define AMDF    0
+//#define IIR     1
 //set which mode to use, AMDF or IIR
-#define TUNER_MODE IIR
+//#define TUNER_MODE IIR
 
 //ADC bit resolution 
 #if ADCBITS > 8
@@ -51,8 +56,10 @@ typedef int16_t samp_t;
 #endif
 #endif
 
+
+
 //debug. uncomment to print debug info
-//#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
+#define RAW_SIGNAL_DEBUG    // Raw ADC sample buffer
 //#define AMDF_DEBUG          // Processed amdf vals
 //#define INTP_DEBUG          // Print interpolation debug info
 //#define ZC_DEBUG

@@ -7,17 +7,13 @@
 #include "mcc_generated_files/mcc.h"
 #include "tuner_defs.h"
 #include "tuner_display.h"
-
+#include "iir.h"
 
 //global vars
-#if (TUNER_MODE == AMDF || defined RAW_SIGNAL_DEBUG)
-#include "amdf.h"
 samp_t sample_buff[SAMPLE_SIZE] = { 0 }; //samples from adc
-#endif
-#if TUNER_MODE == IIR 
 volatile samp_t sample;
-#endif
-enum tuner {SCAN,COLLECT,PROCESS,PAUSE} tuner_state; //sampling states
+enum tuner {SCAN,COLLECT,PROCESS,RESET,SELECT_MODE} tuner_state; //sampling states
+uint8_t btn_sel = 6;
 
 //function prototypes
 adc_t ADC_read(void);
@@ -25,106 +21,43 @@ adc_t ADC_read(void);
 void print_array(uint16_t len, samp_t *arr);
 #endif
 
-#if TUNER_MODE == IIR
-int16_t a1 = -433, a2 = 210, b0 = 20, b1 = -22, b2 = 20; // fc = 370 hz
-static inline int16_t iir_df1(int16_t x0){
-    static int16_t x1,x2,y1,y2;
-    int32_t yn;
-    
-    yn = b0*x0 + b1*x1 + b2*x2 - a1*y1 - a2*y2;
-    yn >>= 8;
-    x2 = x1;
-    x1 = x0;
-    y2 = y1;
-    y1 = (int16_t)yn;
-    return (int16_t)yn;
-}
-
-static inline uint16_t zc(int16_t yn){
-    static uint16_t avg_cnt, cnt, point, accum;
-    static int16_t a,b;
-    uint16_t avg = 0;    
-
-    b = a;
-    a = yn;
-    //find some amount of crossings
-    if(avg_cnt < 15){
-        //count difference between zero crossings
-        if(a >= 0 && b < 0){
-            if(point > 0){
-                accum += cnt - point;
-                avg_cnt++;
-            }
-            //found a crossing point
-            point = cnt; 
-        }
-        cnt++;        
-    }
-    //
-    else{
-        //shift up for better accuracy
-        avg = (uint16_t)(((uint32_t)accum<<5)/avg_cnt);
-#ifdef ZC_DEBUG
-        printf("accum: %u crossings: %u avg: %u \n", accum, avg_cnt, avg);
-#endif        
-        avg_cnt = 0;
-        accum = 0;
-        cnt = 0;            
-        point = 0;            
-    }
-    return avg;
-}
-
-//1) try to determine approximate frequency of raw signal harmonics and all
-//2) set coefficients for filter, filter signal
-//3) determine frequency of filtered (cleaned up) signal
-uint16_t iir_process(int16_t raw_val){
-    int16_t yn;
-    uint16_t f = 0, avg = 0;
-    
-    //2 filter
-    yn = iir_df1(raw_val);
-    //3 find average period
-    avg = zc(yn);
-    
-    //move decimal point to 1/10 place
-    if(avg != 0){
-        f = (uint16_t)((((uint32_t)FS*10)<<5)/avg);
-    }
-    return f;
-}
-#endif
-
 /* Timer interrupt for adc sample frequency     
  */
 void TMR0_Interrupt(void){
     static uint16_t idx;
-    static adc_t adc_val;
-
-    adc_val = ADC_read();
+    static uint16_t btn_delay_count;
+    samp_t adc_val;
     
-    // found a loud signal, is if from a guitar?, does it matter?
-    // TODO: test if it's worth additional testing, like checking for a second
+    //check button every x ticks. if button is pressed, change string select
+    if (btn_delay_count >= BTN_DELAY){
+        btn_delay_count = 0;
+        if(IO_RC7_PORT == 0){
+            btn_sel++;
+            if(btn_sel >= 7)
+                btn_sel = 0;
+            tuner_state = SELECT_MODE;
+        }
+    }
+    btn_delay_count++;
+
+    adc_val = (samp_t)ADC_read();
+
     // peak and checking if the period falls in an expected range
     if (tuner_state == SCAN && adc_val > TRIGGER_LEVEL)
         tuner_state = COLLECT;
     if (tuner_state == COLLECT){
-#if TUNER_MODE == AMDF
-        //collect samples, then process the buffer
+
+        sample = (samp_t)(adc_val - ADCOFFSET);
         if(idx < SAMPLE_SIZE){
-            sample_buff[idx] = adc_val - ADCOFFSET;
+            sample_buff[idx] = sample;
             idx++;
         }
-        else{
-            idx = 0;
+        else
             tuner_state = PROCESS;
-        }
-#else
-        //process every sample
-        sample = (samp_t)(adc_val - ADCOFFSET);
-        tuner_state = PROCESS;        
-#endif
-        
+    }
+    if (tuner_state == RESET){
+        idx = 0;
+        tuner_state = SCAN;
     }
 }
 
@@ -155,22 +88,23 @@ adc_t ADC_read(void){
  */
 #ifdef RAW_SIGNAL_DEBUG
 void print_array(uint16_t len, samp_t *arr){
-    printf("orig_signal = [");
-    for(uint16_t i = 0; i < len; i++ )
+    printf("raw_signal = [");
+    for(uint16_t i = 0; i < len; i++ ){
         if(i == len-1) // last item. no comma
             printf("%i",arr[i]);
         else
             printf("%i,",arr[i]);
+    }
     printf("]\n");
 }
 #endif
-
 
 /*
                          Main application
  */
 void main(void)
 {
+    static uint8_t t_min = T_MIN, t_max = T_MAX;
     // initialize the device
     SYSTEM_Initialize();
 
@@ -194,38 +128,69 @@ void main(void)
 #ifdef RAW_SIGNAL_DEBUG
     printf("adc offset: %d adc trigger: %d \n", ADCOFFSET, TRIGGER_LEVEL);    
     printf("min limit: %d max limit: %d \n", T_MIN, T_MAX);
+    printf("FS= %d\n",FS);
 #endif  
     
+    ssd1306_init();
+    tuner_state = SELECT_MODE;
+    btn_sel = 1;
+
     while (1)
     {
-        if(tuner_state == PROCESS){
-            //INTERRUPT_GlobalInterruptDisable();
-            uint16_t f = 0;                       
-            
-#if TUNER_MODE == AMDF
-            INTERRUPT_GlobalInterruptDisable();
-            tuner_state = PAUSE; 
-            f = amdf(SAMPLE_SIZE, sample_buff, FS);
-            INTERRUPT_GlobalInterruptEnable();
-#else
-            tuner_state = COLLECT;
-            f = iir_process(sample);
-#endif
-            
-            //found a frequency pause adc and display tuning
-            if(f != 0){
-                INTERRUPT_GlobalInterruptDisable();
-#ifdef RAW_SIGNAL_DEBUG
-                //print the original array
-                printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
-                //print_array(SAMPLE_SIZE, sample_buff);
-                printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
-#endif
-                tuner_display(f);
-                tuner_state = SCAN;
-                INTERRUPT_GlobalInterruptEnable();
+        if(tuner_state == SELECT_MODE){
+            tuner_state = RESET;
+            switch(btn_sel){
+                case 0:
+                    t_min = FS/96;
+                    t_max = T_MAX;
+                    break;
+                case 1:
+                    t_min = FS/128;
+                    t_max = FS/96;
+                    break;
+                case 2:
+                    t_min = FS/171;
+                    t_max = FS/128;
+                    break;
+                case 3:
+                    t_min = FS/221;
+                    t_max = FS/171;
+                    break;
+                case 4:
+                    t_min = FS/280;
+                    t_max = FS/221;
+                    break;
+                case 5:
+                    t_min = T_MIN;
+                    t_max = FS/280;
+                    break;
+                case 6:
+                    t_min = T_MIN;
+                    t_max = T_MAX;
+                    break;
             }
-            //INTERRUPT_GlobalInterruptEnable();
+            set_coeff(btn_sel);
+            tuner_display_mode(btn_sel);
+        }
+        if(tuner_state == PROCESS){
+            int16_t yn;
+            INTERRUPT_GlobalInterruptDisable();
+            //print raw sample buffer
+            print_array(SAMPLE_SIZE, sample_buff);
+            
+            //print filtered signal
+            printf("yn = [");
+            for(uint16_t i = 0; i < SAMPLE_SIZE; i++){
+                yn = iir_df1(sample_buff[i]);
+                if(i == SAMPLE_SIZE-1) // last item. no comma
+                    printf("%i",yn);
+                else
+                    printf("%i,",yn);
+            }
+            printf("]\n");
+
+            tuner_state = RESET;
+            INTERRUPT_GlobalInterruptEnable();
         }
     }
 }
