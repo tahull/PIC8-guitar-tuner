@@ -10,15 +10,15 @@
 #include <stdint.h>
 
 //guitar tuner config
-#define FS          7804    //sample frequency set by timmer interrupt rate
-#define SAMPLE_SIZE 256     //size of signal sample array
+#define FS          13888   //sample frequency set by timmer interrupt rate
+#define SAMPLE_SIZE 328     //size of signal sample array
 
-#define ADCBITS     7
+#define ADCBITS     10
 //voltage bias from amplifier circuit in volts
 #define VBIAS       1.8     //1.8v
 //voltage level/trigger point to start collecting samples
 //set high enough so the algorithm isn't constantly processing noise
-#define VTRIGGER    2.5 
+#define VTRIGGER    2.7
 //fvr positive reference voltage 4.096v
 #define ADCVREF     4.096   
 // adc offset. ex for 10 bit
