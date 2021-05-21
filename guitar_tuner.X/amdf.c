@@ -30,7 +30,7 @@ uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs, uint8_t t_min, uint16_t t_
         }
         temp_alpha = temp_alpha/(len_k); // average
 #ifdef AMDF_VERBOSE
-        printf("%u,",alpha); // print amdf array element
+        printf("%u,",temp_alpha); // print amdf array element
 #endif
         //find the lowest value in this sequence, set alpha, beta, gamma
         if(temp_beta < min_val){
@@ -42,7 +42,7 @@ uint16_t amdf(uint16_t len, samp_t *arr, uint16_t fs, uint8_t t_min, uint16_t t_
         }
     }
 #ifdef AMDF_VERBOSE
-    printf("%u]\n",alpha); // print final amdf array element
+    printf("%u]\n",temp_alpha); // print final amdf array element
 #endif
         
     //parabolic peak interpolation. +/- amount to adjust current period
