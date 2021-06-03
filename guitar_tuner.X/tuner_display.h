@@ -1,11 +1,11 @@
 /* 
- * File:   tuning.h
+ * File:   tuner_display.h
  * Author: tahull
  * display human readable information post-signal-processing
  */
 
-#ifndef TUNING_H
-#define	TUNING_H
+#ifndef TUNER_DISPLAY_H
+#define	TUNER_DISPLAY_H
 
 #include <stdint.h>
 #include <stdio.h>
@@ -42,5 +42,5 @@ void tuner_display_uart(uint16_t f);
 #endif
 
 
-#endif	/* TUNING_H */
+#endif	/* TUNER_DISPLAY_H */
 

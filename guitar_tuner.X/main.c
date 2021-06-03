@@ -11,13 +11,6 @@
 #include "ssd1306_oled.h"
 
 
-//global vars
-samp_t sample_buff[SAMPLE_SIZE] = { 0 }; //samples from adc
-enum tuner {SCAN,COLLECT,PROCESS,RESET,SELECT_MODE} tuner_state; //sampling states
-
-//button options 0-5 for specifying specific string of 6-string guitar, 6 = attempt auto detect
-uint8_t btn_sel = 6;
-
 //function prototypes
 adc_result_t ADC_read(void);
 #ifdef RAW_SIGNAL_VERBOSE
@@ -109,6 +102,7 @@ void print_array(uint16_t len, samp_t *arr){
 void main(void)
 {
     static uint8_t t_min = T_MIN, t_max = T_MAX;
+    const uint8_t t_bounds[]={T_MAX,FS/96,FS/128,FS/171,FS/221,FS/280,T_MIN};
     // initialize the device
     SYSTEM_Initialize();
 
@@ -141,53 +135,30 @@ void main(void)
     {
         if(tuner_state == SELECT_MODE){
             INTERRUPT_GlobalInterruptDisable();
-            tuner_state = RESET;
-            switch(btn_sel){
-                case 0:
-                    t_min = FS/96;
-                    t_max = T_MAX;
-                    break;
-                case 1:
-                    t_min = FS/128;
-                    t_max = FS/96;
-                    break;
-                case 2:
-                    t_min = FS/171;
-                    t_max = FS/128;
-                    break;
-                case 3:
-                    t_min = FS/221;
-                    t_max = FS/171;
-                    break;
-                case 4:
-                    t_min = FS/280;
-                    t_max = FS/221;
-                    break;
-                case 5:
-                    t_min = T_MIN;
-                    t_max = FS/280;
-                    break;
-                case 6:
-                    t_min = T_MIN;
-                    t_max = T_MAX;
-                    break;
+            if(btn_sel < 6){
+                t_max = t_bounds[btn_sel];
+                t_min = t_bounds[btn_sel+1];
+            }
+            else{
+                t_max = T_MAX;
+                t_min = T_MIN;
             }
             tuner_display_mode(btn_sel);
+            tuner_state = RESET;
             INTERRUPT_GlobalInterruptEnable();
         }
-        // process signal, pause interrupt, clear sample buffer, display frequency
-        // then restart sample collecting
+        // process signal, pause interrupt, display frequency
+        // then reset sample collecting
         if(tuner_state == PROCESS){            
             INTERRUPT_GlobalInterruptDisable();
-            tuner_state = RESET;
+            uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS,t_min,t_max);
 #ifdef RAW_SIGNAL_VERBOSE
             //print the raw signal array
+            //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             print_array(SAMPLE_SIZE, sample_buff);
 #endif
-            uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS,t_min,t_max);
-            //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
             tuner_display(f);            
-
+            tuner_state = RESET;
             INTERRUPT_GlobalInterruptEnable();
         }
     }

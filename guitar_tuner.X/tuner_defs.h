@@ -1,11 +1,11 @@
 /* 
- * File:   guitar_tuner.h
+ * File:   tuner_defs.h
  * Author: tahull
  *
  */
 
-#ifndef GUITAR_TUNER_H
-#define	GUITAR_TUNER_H
+#ifndef TUNER_DEFS_H
+#define	TUNER_DEFS_H
 
 #include <stdint.h>
 
@@ -50,6 +50,13 @@ typedef int8_t samp_t;
 //#define TUNE_DISPLAY            // Print tuner info to uart
 //#define TUNE_DISPLAY_VERBOSE  // Tuner display frequency and range
 
+//global vars
+samp_t sample_buff[SAMPLE_SIZE] = { 0 }; //samples from adc
+enum tuner {SCAN,COLLECT,PROCESS,RESET,SELECT_MODE} tuner_state; //sampling states
 
-#endif	/* GUITAR_TUNER_H */
+//button options 0-5 for specifying specific string of 6-string guitar, 6 = attempt auto detect
+uint8_t btn_sel = 6;
+
+
+#endif	/* TUNER_DEFS_H */
 

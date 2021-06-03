@@ -1,7 +1,7 @@
 /* 
  * File:   ssd1306_oled.h
  * Author: tahull
- * Simple oled driver for a guitar tuner
+ * Simple SSD1306 oled driver
  * oled size is 128x64
  */
 
