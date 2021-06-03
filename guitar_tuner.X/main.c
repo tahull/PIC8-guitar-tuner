@@ -7,8 +7,8 @@
 #include "mcc_generated_files/mcc.h"
 #include "tuner_defs.h"
 #include "tuner_display.h"
-#include "amdf.h"
-#include "ssd1306_oled.h"
+//#include "tuner/amdf.h"
+#include "tuner/acf.h"
 
 
 //function prototypes
@@ -151,7 +151,8 @@ void main(void)
         // then reset sample collecting
         if(tuner_state == PROCESS){            
             INTERRUPT_GlobalInterruptDisable();
-            uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS,t_min,t_max);
+            //uint16_t f = amdf(SAMPLE_SIZE, sample_buff, FS,t_min,t_max);
+            uint16_t f = acf(SAMPLE_SIZE, sample_buff, FS,t_min,t_max);
 #ifdef RAW_SIGNAL_VERBOSE
             //print the raw signal array
             //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));

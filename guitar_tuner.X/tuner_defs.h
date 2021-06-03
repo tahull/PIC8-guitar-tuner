@@ -8,6 +8,7 @@
 #define	TUNER_DEFS_H
 
 #include <stdint.h>
+#include <stdio.h>
 
 //guitar tuner config
 #define FS          13888   //sample frequency set by timmer interrupt rate
@@ -46,6 +47,7 @@ typedef int8_t samp_t;
 //debug. uncomment to print debug info
 //#define RAW_SIGNAL_VERBOSE    // Raw ADC sample buffer
 //#define AMDF_VERBOSE          // Processed amdf vals
+//#define ACF_VERBOSE           // Processed ACF vals
 //#define INTP_VERBOSE          // Print interpolation debug info
 //#define TUNE_DISPLAY            // Print tuner info to uart
 //#define TUNE_DISPLAY_VERBOSE  // Tuner display frequency and range
