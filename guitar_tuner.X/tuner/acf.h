@@ -7,8 +7,10 @@
 #ifndef ACF_H
 #define	ACF_H
 
+#include "interp.h"
 #include "../tuner_defs.h"
 
+#define ACF_FP_SHFT 5
 #ifdef	__cplusplus
 extern "C" {
 #endif

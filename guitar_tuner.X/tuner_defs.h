@@ -14,7 +14,7 @@
 #define FS          13888   //sample frequency set by timmer interrupt rate
 #define SAMPLE_SIZE 328     //size of signal sample array
 
-#define ADCBITS     10
+#define ADCBITS     7
 //voltage bias from amplifier circuit in volts
 #define VBIAS       1.8     //1.8v
 //voltage level/trigger point to start collecting samples

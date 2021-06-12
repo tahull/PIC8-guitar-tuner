@@ -22,6 +22,7 @@
       </logicalFolder>
       <logicalFolder name="tuner" displayName="tuner" projectFiles="true">
         <itemPath>tuner/acf.h</itemPath>
+        <itemPath>tuner/interp.h</itemPath>
       </logicalFolder>
       <itemPath>tuner_defs.h</itemPath>
       <itemPath>tuner_display.h</itemPath>
@@ -53,6 +54,7 @@
       </logicalFolder>
       <logicalFolder name="tuner" displayName="tuner" projectFiles="true">
         <itemPath>tuner/acf.c</itemPath>
+        <itemPath>tuner/interp.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
       <itemPath>tuner_display.c</itemPath>
@@ -679,8 +681,24 @@
         <property key="wpo-lto" value="false"/>
       </XC8-config-global>
       <item path="amdf.c" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-CO>
+        </XC8-CO>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="amdf.h" ex="true" overriding="false">
+        <HI-TECH-COMP>
+        </HI-TECH-COMP>
+        <HI-TECH-LINK>
+        </HI-TECH-LINK>
+        <XC8-CO>
+        </XC8-CO>
+        <XC8-config-global>
+        </XC8-config-global>
       </item>
       <item path="mcc_generated_files/examples/i2c1_master_example.c"
             ex="true"
