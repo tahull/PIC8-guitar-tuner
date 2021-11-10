@@ -45,7 +45,7 @@ typedef int8_t samp_t;
 #endif
 
 //debug. uncomment to print debug info
-//#define RAW_SIGNAL_VERBOSE    // Raw ADC sample buffer
+#define RAW_SIGNAL_VERBOSE    // Raw ADC sample buffer
 //#define AMDF_VERBOSE          // Processed amdf vals
 //#define ACF_VERBOSE           // Processed ACF vals
 //#define INTP_VERBOSE          // Print interpolation debug info

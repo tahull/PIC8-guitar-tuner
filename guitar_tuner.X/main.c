@@ -156,6 +156,12 @@ void main(void)
 #ifdef RAW_SIGNAL_VERBOSE
             //print the raw signal array
             //printf("freq: %u.%u\n",(uint16_t)(f/10),(uint16_t)(f%10));
+            const uint16_t strings[6] = {82,110,146,197,246,329};
+            printf("FS=%u\n", FS);
+            if(btn_sel == 6)
+                printf("f=auto\n");
+            else
+                printf("f=%u\n",strings[btn_sel]);
             print_array(SAMPLE_SIZE, sample_buff);
 #endif
             tuner_display(f);            
