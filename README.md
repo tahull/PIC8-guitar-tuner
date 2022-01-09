@@ -7,10 +7,11 @@ Compiler: XC8
 ![image of e2 string in tune](e2.jpg)
 
 - Autocorrelation
-  - [-] AMDF average magnitude difference function with parabolic interpolation
+  - [X] AMDF average magnitude difference function with parabolic interpolation
     - TODO: Improve accuracy
     - TODO: Reduce harmonic problems in auto-detect mode
-  - [ ] Autocorrelation (not implemented)
+  - [X] Autocorrelation
+    - TODO: Improve accuracy and speed
 - Low-pass filtering
   - [-] IIR elliptic filter implemented with fixed point direct form I (In progress)
 
@@ -22,3 +23,8 @@ project configurations
   - f_to_mv.py for generating test data
 - `pickit3` configuration
   - Device programmer 
+
+py tools
+- f_to_mv.py for generating test data for simulation in MPLabx ide.
+- corr_analyze.ipynb for running tests on collected real samples from microcontroller board  
+![image of ](./py%20tools/correlation_test.jpg)
